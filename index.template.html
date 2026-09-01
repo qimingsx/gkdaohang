@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>山西高考志愿罗盘</title>
+<meta name="description" content="面向山西高三家长：输入选科与模考分数，一键查看当前可报、多考20分可报的院校专业组，认清位置、激励冲刺。">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@600;700;900&display=swap">
+<style>
+:root{
+  --paper:#F2F4F7;
+  --card:#FFFFFF;
+  --ink:#23272F;
+  --muted:#6E7683;
+  --line:#E5E7EB;
+  --blue:#3B7DD8;
+  --blue-deep:#2E6BC0;
+  --blue-soft:#EBF1FB;
+  --orange:#E8893C;
+  --orange-deep:#D4762A;
+  --orange-soft:#FDF0E4;
+  --green:#2E7D5B;
+  --green-soft:#E7F1EB;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(35,39,47,.05),0 8px 24px rgba(35,39,47,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{font-size:16px;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC","Helvetica Neue",sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.55;
+}
+body.no-scroll{overflow:hidden;}
+.container{max-width:560px;margin:0 auto;padding:0 14px 48px;}
+
+/* ===== 顶部 ===== */
+.hero{
+  background:linear-gradient(120deg,#4A90D9 0%,#7BA3C4 35%,#A89888 60%,#D4843A 100%);
+  color:#fff;
+  padding:26px 0 24px;
+  border-bottom-left-radius:22px;
+  border-bottom-right-radius:22px;
+}
+.hero-inner{max-width:560px;margin:0 auto;padding:0 14px;}
+.brand{display:flex;align-items:center;gap:14px;}
+.brand-name h1{
+  font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;
+  font-size:24px;font-weight:900;letter-spacing:1px;line-height:1.25;
+}
+.brand-sub{margin-top:4px;font-size:13px;opacity:.82;letter-spacing:.5px;}
+.hero-desc{margin-top:16px;font-size:14.5px;line-height:1.7;opacity:.94;padding:0 16px;}
+.hero-sign{display:block;margin-top:8px;font-size:12.5px;opacity:.72;text-align:right;letter-spacing:.3px;}
+
+/* ===== 卡片 / 区块 ===== */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px 16px;
+  box-shadow:var(--shadow);
+  margin-top:16px;
+}
+.card h2{
+  display:flex;align-items:center;gap:8px;
+  font-size:16px;font-weight:700;color:var(--blue-deep);
+  margin-bottom:14px;
+}
+.step-no{
+  flex:0 0 auto;width:22px;height:22px;border-radius:6px;
+  background:var(--blue);color:#fff;
+  font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;
+}
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.field label{display:block;font-size:14px;font-weight:600;margin-bottom:8px;color:var(--ink);}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.6;}
+
+/* 首选 分段选择 */
+.seg{display:flex;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px;}
+.seg button{
+  flex:1;border:none;background:transparent;border-radius:9px;
+  padding:11px 0;font-size:15px;font-weight:600;color:var(--muted);cursor:pointer;
+}
+.seg button.on{background:#fff;color:var(--blue-deep);box-shadow:0 1px 4px rgba(35,39,47,.12);}
+
+/* 再选 chips */
+.chips{display:flex;flex-wrap:wrap;gap:9px;}
+.chip{
+  border:1.5px solid var(--line);background:#fff;color:var(--ink);
+  border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;
+  transition:all .15s ease;
+}
+.chip.on{border-color:var(--blue);background:var(--blue-soft);color:var(--blue-deep);font-weight:700;}
+.chip:disabled{opacity:.45;cursor:not-allowed;}
+
+/* 输入 */
+.inp{
+  width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:11px;
+  font-size:17px;color:var(--ink);background:#fff;outline:none;
+}
+.inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,78,140,.12);}
+.inp::placeholder{color:#A9A29A;}
+
+/* 查询按钮 */
+.actions{margin-top:16px;display:flex;flex-direction:column;gap:11px;}
+.btn{
+  display:block;width:100%;border:none;border-radius:13px;
+  padding:16px 14px;font-size:16.5px;font-weight:700;cursor:pointer;
+  transition:transform .08s ease, filter .15s ease;
+}
+.btn:active{transform:translateY(1px);filter:brightness(.95);}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-orange{background:var(--orange);color:#fff;}
+.btn-purple{background:linear-gradient(135deg,#8B5CF6,#7C3AED);color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.35);}
+.btn-purple:active{transform:scale(.98);}
+.dream-search-box{display:flex;gap:8px;margin-bottom:10px;}
+.dream-subject{display:flex;gap:8px;margin-bottom:12px;}
+.dream-subject-btn{
+  flex:1;border:1.5px solid #DDE3EC;background:#fff;border-radius:9px;
+  padding:9px;font-size:14px;font-weight:600;color:#666;cursor:pointer;
+  transition:all .15s;
+}
+.dream-subject-btn.on{border-color:#8B5CF6;background:#F3E8FF;color:#7C3AED;}
+.dream-subject-btn:active{transform:scale(.98);}
+.dream-search-input{
+  flex:1;border:1.5px solid #DDE3EC;border-radius:10px;padding:11px 14px;
+  font-size:15px;outline:none;transition:border-color .2s;
+}
+.dream-search-input:focus{border-color:#8B5CF6;}
+.dream-mode{display:flex;gap:6px;margin-bottom:12px;}
+.dream-mode button{
+  flex:1;border:1.5px solid #DDE3EC;background:#fff;border-radius:8px;
+  padding:7px;font-size:13px;font-weight:600;color:#666;cursor:pointer;
+}
+.dream-mode button.on{border-color:#8B5CF6;background:#F3E8FF;color:#7C3AED;}
+.dream-result-list{max-height:50vh;overflow-y:auto;}
+.dream-result-item{
+  padding:11px 12px;border-radius:9px;margin-bottom:6px;cursor:pointer;
+  background:#F8F9FB;border:1px solid #EEF0F3;transition:all .15s;
+}
+.dream-result-item:active{background:#F3E8FF;border-color:#D8B4FE;}
+.dream-result-name{font-size:14.5px;font-weight:700;color:var(--ink);}
+.dream-result-meta{font-size:11.5px;color:#888;margin-top:3px;display:flex;gap:10px;}
+.dream-empty{text-align:center;color:#999;padding:30px 0;font-size:14px;}
+.dream-hint{font-size:12px;color:#999;margin-bottom:8px;text-align:center;}
+.btn small{display:block;font-weight:500;font-size:12px;opacity:.85;margin-top:2px;}
+
+/* ===== 结果 ===== */
+#results{margin-top:18px;}
+.result-head{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px;box-shadow:var(--shadow);
+}
+.result-title{font-size:15px;font-weight:700;color:var(--blue-deep);}
+.result-meta{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.7;}
+.result-meta b{color:var(--ink);font-weight:700;}
+.target-num{font-size:26px;font-weight:900;color:var(--orange);font-family:"Noto Serif SC","Songti SC",serif;}
+
+/* 定位条 */
+.loc{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);}
+.loc-label{font-size:12.5px;color:var(--muted);margin-bottom:7px;display:flex;justify-content:space-between;}
+.loc-scale{position:relative;height:26px;border-radius:999px;overflow:hidden;display:flex;}
+.loc-zone{height:100%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
+.loc-down{background:var(--green);}
+.loc-mid{background:var(--blue);}
+.loc-up{background:var(--orange);}
+.loc-needle{
+  position:absolute;top:-4px;bottom:-4px;width:2.5px;background:#fff;
+  box-shadow:0 0 0 1px rgba(0,0,0,.25);
+}
+.loc-needle::after{
+  content:"";position:absolute;left:50%;top:-7px;transform:translateX(-50%);
+  border:6px solid transparent;border-top:8px solid #fff;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3));
+}
+.loc-bounds{display:flex;justify-content:space-between;margin-top:5px;font-size:11.5px;color:var(--muted);}
+
+/* 专业组卡片 */
+.g-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:15px 16px;margin-top:12px;box-shadow:var(--shadow);
+}
+.g-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;}
+.g-school{font-size:16.5px;font-weight:700;line-height:1.35;display:flex;align-items:center;flex-wrap:wrap;gap:5px;}
+.st-tag{font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:#F0F2F5;color:#5A6573;white-space:nowrap;}
+.badge-min{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:#FFF3E0;color:#E65100;white-space:nowrap;border:1px solid #FFCC80;}
+.cluster-btn{
+  font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;cursor:pointer;
+  background:linear-gradient(135deg,#E8F0FE,#DCE9FB);color:#1A56A8;border:1px solid #B8CCF0;
+  display:inline-flex;align-items:center;gap:3px;white-space:nowrap;
+}
+.cluster-btn:active{background:#C8DCF7;}
+.cluster-group{margin-bottom:14px;}
+.cluster-group-title{
+  font-size:13px;font-weight:700;color:#1A56A8;margin-bottom:7px;
+  padding-left:8px;border-left:3px solid #4A90D9;display:flex;align-items:center;gap:6px;
+}
+.cluster-group-count{font-size:11px;font-weight:500;color:#888;background:#F0F2F5;border-radius:10px;padding:1px 7px;}
+.cluster-item{
+  background:#F8F9FB;border-radius:8px;padding:9px 11px;margin-bottom:6px;
+  border:1px solid #EEF0F3;
+}
+.cluster-item-name{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.4;}
+.cluster-item-meta{font-size:11.5px;color:#888;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap;}
+.cluster-item-cat{background:#FFF3E0;color:#B85C00;padding:1px 6px;border-radius:3px;font-weight:600;}
+.g-score-box{flex:0 0 auto;text-align:right;}
+.g-score{font-size:23px;font-weight:900;color:var(--blue-deep);line-height:1.1;}
+.g-rank{font-size:12px;color:var(--muted);margin-top:2px;}
+.g-meta{font-size:13px;color:var(--muted);margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 10px;}
+.g-meta .prov-city{color:var(--ink);font-weight:500;}
+.g-line{margin:11px 0;border:none;border-top:1px solid var(--line);}
+.major-label{font-size:12.5px;color:var(--muted);margin-bottom:7px;}
+.major-chips{display:flex;flex-wrap:wrap;gap:7px;}
+.major-chip{
+  border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  border-radius:8px;padding:5px 10px;font-size:13px;line-height:1.4;cursor:pointer;text-align:left;
+}
+.major-chip:active{background:var(--blue-soft);border-color:var(--blue);}
+.major-chip.tier1{background:#FDECEC;border-color:#F0B8B8;color:#B91C1C;}
+.major-chip.tier2{background:#FEF9E7;border-color:#ECD9A0;color:#92400E;}
+.major-chip.tier3{background:#EBF2FE;border-color:#B8CCF0;color:#1E40AF;}
+.major-chip.tier4{background:#F3E8FF;border-color:#D8B4FE;color:#6B21A8;}
+.g-note{margin-top:10px;}
+.g-note summary{
+  cursor:pointer;font-size:12.5px;color:var(--muted);list-style:none;font-weight:600;
+}
+.g-note summary::-webkit-details-marker{display:none;}
+.g-note[open] summary{margin-bottom:6px;}
+.g-note p{font-size:12.5px;color:var(--muted);line-height:1.75;}
+.g-foot{display:flex;justify-content:space-between;align-items:center;margin-top:11px;font-size:13px;}
+.g-fee{color:var(--orange-deep);font-weight:600;}
+.other-groups-btn{
+  font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:5px;cursor:pointer;
+  background:#F0F4FF;color:#3A6FD4;border:1px solid #C5D6F5;white-space:nowrap;
+}
+.other-groups-btn:active{background:#DCE8FB;}
+.og-list{max-height:60vh;overflow-y:auto;}
+.og-item{
+  background:#F8F9FB;border-radius:9px;padding:10px 12px;margin-bottom:7px;
+  border:1px solid #EEF0F3;
+}
+.og-item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.og-group-name{font-size:13.5px;font-weight:700;color:var(--ink);}
+.og-score{font-size:15px;font-weight:900;color:var(--blue-deep);}
+.og-score span{font-size:11px;color:var(--muted);font-weight:600;}
+.og-meta{font-size:11.5px;color:#888;display:flex;gap:10px;flex-wrap:wrap;margin-top:3px;}
+.og-majors{font-size:12px;color:#555;margin-top:5px;line-height:1.5;}
+.og-current{border-color:#8B5CF6;background:#F8F5FF;}
+.og-current-tag{font-size:10px;font-weight:700;color:#7C3AED;background:#EDE9FE;padding:1px 5px;border-radius:3px;margin-left:5px;}
+
+/* 标签 */
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;color:#fff;}
+.tag-up{background:var(--orange);}
+.tag-mid{background:var(--blue);}
+.tag-down{background:var(--green);}
+.badge{display:inline-block;border-radius:5px;padding:1px 7px;font-size:11px;font-weight:600;border:1px solid;margin-left:6px;vertical-align:1.5px;}
+.badge-b{color:var(--blue);border-color:var(--blue);background:var(--blue-soft);}
+.badge-o{color:var(--orange-deep);border-color:var(--orange);background:var(--orange-soft);}
+.badge-g{color:var(--muted);border-color:#C9C2B6;background:#F1EDE5;}
+
+/* ===== 考情分析 / 成绩定位 ===== */
+.analysis-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px 16px 14px;box-shadow:var(--shadow);margin-top:12px;
+}
+.analysis-title{
+  font-size:15px;font-weight:800;color:var(--ink);
+  padding-left:12px;margin-bottom:12px;position:relative;
+}
+.analysis-title::before{
+  content:'';position:absolute;left:0;top:3px;bottom:3px;width:4px;border-radius:3px;
+  background:linear-gradient(to bottom,var(--blue),var(--orange));
+}
+.kaoqing-grid{display:flex;gap:10px;margin-bottom:14px;}
+.kq-item{flex:1;text-align:center;background:var(--paper);border-radius:10px;padding:10px 4px;}
+.kq-num{font-size:18px;font-weight:900;color:var(--ink);font-family:"Noto Serif SC",serif;}
+.kq-label{font-size:11.5px;color:var(--muted);margin-top:3px;}
+.line-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.line-table th,.line-table td{border:1px solid var(--line);padding:6px 4px;text-align:center;}
+.line-table th{background:var(--blue-soft);color:var(--blue-deep);font-weight:700;}
+.line-table td.hl{color:var(--orange-deep);font-weight:700;}
+.position-text{
+  font-size:14px;line-height:1.8;color:var(--ink);background:var(--paper);
+  border-radius:10px;padding:12px 14px;margin-bottom:14px;
+}
+.position-text b{color:var(--orange-deep);}
+.curve-wrap{background:var(--paper);border-radius:10px;padding:10px 8px 6px;}
+.curve-label{font-size:12px;color:var(--muted);text-align:center;margin-bottom:4px;}
+#curveChart{width:100%;height:auto;display:block;}
+.curve-legend{display:flex;justify-content:center;gap:16px;font-size:11px;color:var(--muted);margin-top:4px;flex-wrap:wrap;}
+.curve-legend i{display:inline-block;width:18px;height:0;margin-right:4px;vertical-align:middle;}
+.lg-line{border-top:2px solid;}
+.lg-blue{border-color:var(--blue);}
+.lg-dash{border-top:2px dashed #999;}
+.lg-dot{width:8px!important;height:8px!important;border-radius:50%;background:var(--orange);border:2px solid #fff;box-shadow:0 0 0 1px var(--orange);}
+
+/* ===== 结果筛选条 ===== */
+.filter-bar{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);}
+.filter-row{display:flex;align-items:flex-start;gap:8px;margin-top:9px;}
+.filter-row:first-child{margin-top:0;}
+.filter-label{flex:none;font-size:12.5px;font-weight:700;color:var(--ink);padding-top:6px;min-width:44px;}
+.filter-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.f-chip{
+  border:1px solid var(--line);background:#fff;color:var(--ink);
+  border-radius:999px;padding:4px 11px;font-size:12.5px;line-height:1.4;
+  cursor:pointer;transition:all .15s ease;user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.f-chip:active{transform:scale(.96);}
+.f-chip.on{background:var(--blue-deep);border-color:var(--blue-deep);color:#fff;font-weight:700;}
+.f-chip-lv.on{background:var(--orange);border-color:var(--orange);}
+.filter-op{margin-top:11px;display:flex;align-items:center;gap:12px;}
+.filter-reset{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:4px 14px;font-size:12.5px;cursor:pointer;}
+.filter-reset:hover{border-color:var(--orange);color:var(--orange-deep);}
+.filter-count{font-size:12px;color:var(--muted);}
+
+/* 空状态 */
+.empty{
+  background:var(--card);border:1px dashed var(--line);border-radius:var(--radius);
+  padding:26px 18px;text-align:center;margin-top:12px;color:var(--muted);font-size:14px;line-height:1.8;
+}
+.empty b{color:var(--ink);}
+.load-more{
+  display:block;width:100%;margin-top:14px;padding:13px;border:1.5px dashed var(--blue);
+  background:var(--blue-soft);color:var(--blue-deep);border-radius:12px;
+  font-size:15px;font-weight:700;cursor:pointer;
+}
+.all-shown{margin-top:14px;text-align:center;font-size:12.5px;color:#9A938A;}
+
+/* 弹窗 */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;}
+.modal[hidden]{display:none;}
+.modal-mask{position:absolute;inset:0;background:rgba(21,28,40,.52);}
+.modal-sheet{
+  position:relative;width:100%;max-width:560px;max-height:88vh;overflow:auto;
+  background:var(--card);border-radius:18px 18px 0 0;padding:18px 18px 30px;
+  animation:sheetUp .22s ease;
+}
+@keyframes sheetUp{from{transform:translateY(30px);opacity:.6;}to{transform:none;opacity:1;}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.modal-title{font-size:17px;font-weight:800;color:var(--blue-deep);}
+.icon-btn{
+  border:none;background:var(--paper);border-radius:50%;width:32px;height:32px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);flex:0 0 auto;
+}
+.m-block{margin-top:12px;}
+.m-block:first-child{margin-top:0;}
+.m-label{font-size:13px;font-weight:700;color:var(--blue-deep);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.m-text{font-size:14.5px;line-height:1.8;color:var(--ink);}
+.m-text.pro{color:#1F6B46;}
+.m-text.con{color:#A0522D;}
+.m-cat{font-size:12.5px;color:var(--muted);margin-bottom:12px;}
+.same-btn{
+  width:100%;margin-top:16px;border:1.5px solid var(--blue);background:var(--blue-soft);
+  color:var(--blue-deep);border-radius:11px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;
+}
+.same-btn.job-btn{
+  border-color:var(--orange);background:var(--orange-soft);color:var(--orange-deep);
+}
+/* 优质就业 */
+.job-row{border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:#fff;margin-bottom:9px;}
+.job-name{font-weight:700;font-size:14.5px;color:var(--ink);}
+.job-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.job-line{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.65;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.job-line.hire{color:var(--blue-deep);-webkit-line-clamp:3;}
+.major-list{display:flex;flex-direction:column;gap:9px;margin-top:4px;}
+.major-row{
+  border:1px solid var(--line);border-radius:11px;padding:11px 13px;cursor:pointer;background:#fff;
+}
+.major-row:active{background:var(--blue-soft);}
+.major-row .m-name{font-weight:700;font-size:14.5px;color:var(--ink);}
+.major-row .m-sub{font-size:12px;color:var(--muted);margin-top:3px;display:flex;gap:4px 12px;flex-wrap:wrap;}
+.m-empty{font-size:13.5px;color:var(--muted);line-height:1.7;padding:8px 2px;}
+.fuzzy-note{font-size:12px;color:var(--muted);background:var(--paper);border-radius:8px;padding:7px 10px;margin-top:10px;line-height:1.6;}
+.m-foot{margin-top:16px;text-align:center;}
+.btn-primary{
+  display:inline-block;border:none;background:var(--blue-deep,#2b6bf3);color:#fff;
+  font-size:15px;font-weight:600;padding:11px 44px;border-radius:999px;cursor:pointer;
+  box-shadow:0 4px 12px rgba(43,107,243,.25);transition:all .2s ease;
+}
+.btn-primary:active{transform:scale(.97);}
+
+/* toast */
+#toast{
+  position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(20px);
+  background:rgba(21,28,40,.92);color:#fff;border-radius:999px;padding:11px 20px;
+  font-size:14px;opacity:0;pointer-events:none;transition:all .25s ease;z-index:80;max-width:86vw;text-align:center;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+footer{margin-top:26px;text-align:center;font-size:11.5px;color:#9A938A;line-height:1.8;padding:0 20px;}
+@media (min-width:561px){.modal-sheet{border-radius:18px;margin-bottom:24px;}}
+
+/* ===== 外观优化 ===== */
+/* 背景：微妙径向渐变，增加层次感 */
+body{
+  background:radial-gradient(ellipse at 50% 0%, #F7F8FA 0%, #F2F4F7 40%, #EEF0F4 100%);
+  background-attachment:fixed;
+  min-height:100vh;
+}
+
+/* 顶部hero：增加微妙纹理和底部光泽 */
+.hero{
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255,200,100,.12) 0%, transparent 40%);
+  pointer-events:none;
+}
+.hero::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+}
+
+/* SVG图标：增加容器背景和发光效果 */
+.brand svg{
+  flex:0 0 auto;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.18), rgba(255,255,255,.05));
+  box-shadow:0 2px 12px rgba(0,0,0,.15), inset 0 1px 2px rgba(255,255,255,.2);
+  padding:3px;
+  animation:compassGlow 3s ease-in-out infinite;
+}
+@keyframes compassGlow{
+  0%,100%{box-shadow:0 2px 12px rgba(0,0,0,.15), inset 0 1px 2px rgba(255,255,255,.2);}
+  50%{box-shadow:0 2px 16px rgba(255,180,80,.3), inset 0 1px 2px rgba(255,255,255,.25);}
+}
+
+/* 卡片：优化阴影和边框 */
+.card{
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 1px 3px rgba(35,39,47,.04),0 4px 16px rgba(35,39,47,.05);
+  transition:box-shadow .2s ease;
+}
+.card:hover{
+  box-shadow:0 2px 6px rgba(35,39,47,.06),0 8px 24px rgba(35,39,47,.08);
+}
+
+/* 步骤编号：优化样式 */
+.step-no{
+  background:linear-gradient(135deg,#4A90D9,#3B7DD8);
+  box-shadow:0 2px 6px rgba(59,125,216,.35);
+  font-weight:800;
+}
+
+/* 分段选择：优化选中态 */
+.seg button.on{
+  background:linear-gradient(135deg,#fff,#F5F8FC);
+  color:var(--blue-deep);
+  box-shadow:0 1px 4px rgba(35,39,47,.1),0 2px 8px rgba(59,125,216,.12);
+  font-weight:700;
+}
+
+/* 再选chips：优化选中态 */
+.chip.on{
+  background:linear-gradient(135deg,#EBF1FB,#E0EAF8);
+  box-shadow:0 1px 4px rgba(59,125,216,.15);
+}
+
+/* 输入框：优化focus效果 */
+.inp{
+  border:1.5px solid #DDE3EC;
+  background:linear-gradient(180deg,#fff,#FCFDFE);
+  transition:border-color .2s,box-shadow .2s;
+}
+.inp:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(59,125,216,.12),0 1px 4px rgba(59,125,216,.1);
+  background:#fff;
+}
+
+/* 按钮：统一优化渐变、阴影、active效果 */
+.btn{
+  position:relative;
+  overflow:hidden;
+  transition:transform .1s ease, box-shadow .2s ease, filter .15s ease;
+  letter-spacing:1px;
+}
+.btn::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),transparent);
+  pointer-events:none;
+}
+.btn-blue{
+  background:linear-gradient(135deg,#4A90D9 0%,#3B7DD8 50%,#2E6BC0 100%);
+  box-shadow:0 2px 8px rgba(59,125,216,.35),0 4px 16px rgba(59,125,216,.2);
+}
+.btn-blue:active{
+  transform:translateY(1px) scale(.99);
+  box-shadow:0 1px 4px rgba(59,125,216,.3);
+  filter:brightness(.95);
+}
+.btn-orange{
+  background:linear-gradient(135deg,#F0984A 0%,#E8893C 50%,#D4762A 100%);
+  box-shadow:0 2px 8px rgba(232,137,60,.35),0 4px 16px rgba(232,137,60,.2);
+}
+.btn-orange:active{
+  transform:translateY(1px) scale(.99);
+  box-shadow:0 1px 4px rgba(232,137,60,.3);
+  filter:brightness(.95);
+}
+.btn-purple{
+  background:linear-gradient(135deg,#9B6DF6 0%,#8B5CF6 50%,#7C3AED 100%);
+  box-shadow:0 2px 8px rgba(139,92,246,.35),0 4px 16px rgba(139,92,246,.2);
+}
+.btn-purple:active{
+  transform:translateY(1px) scale(.99);
+  box-shadow:0 1px 4px rgba(139,92,246,.3);
+  filter:brightness(.95);
+}
+
+/* 专业组卡片：优化阴影 */
+.g-card{
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 1px 3px rgba(35,39,47,.04),0 4px 12px rgba(35,39,47,.05);
+  transition:box-shadow .2s ease;
+}
+.g-card:hover{
+  box-shadow:0 2px 6px rgba(35,39,47,.06),0 8px 20px rgba(35,39,47,.08);
+}
+
+/* 专业chip：优化active效果 */
+.major-chip{
+  transition:all .15s ease;
+}
+.major-chip:active{
+  transform:scale(.97);
+}
+
+/* 筛选栏：优化选中态 */
+.f-chip.on{
+  box-shadow:0 1px 4px rgba(46,107,192,.25);
+}
+.f-chip-lv.on{
+  box-shadow:0 1px 4px rgba(232,137,60,.3);
+}
+
+/* 弹窗：优化阴影和边框 */
+.modal-sheet{
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 -4px 24px rgba(0,0,0,.12),0 8px 32px rgba(0,0,0,.15);
+}
+.modal-mask{
+  background:rgba(21,28,40,.48);
+  backdrop-filter:blur(3px);
+}
+
+/* 弹窗按钮：优化 */
+.btn-primary{
+  background:linear-gradient(135deg,#4A90D9,#2E6BC0);
+  box-shadow:0 2px 8px rgba(46,107,192,.3);
+}
+.btn-primary:active{
+  transform:scale(.97);
+  box-shadow:0 1px 4px rgba(46,107,192,.25);
+}
+
+/* 考情分析卡片：优化 */
+.analysis-card{
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 1px 3px rgba(35,39,47,.04),0 4px 12px rgba(35,39,47,.05);
+}
+
+/* 加载更多按钮：优化 */
+.load-more{
+  background:linear-gradient(135deg,#F5F8FC,#EBF1FB);
+  border:1.5px dashed #B8CCF0;
+  transition:all .2s ease;
+}
+.load-more:active{
+  background:linear-gradient(135deg,#EBF1FB,#E0EAF8);
+  transform:scale(.99);
+}
+
+/* 其他专业组按钮：优化 */
+.other-groups-btn{
+  transition:all .15s ease;
+}
+.other-groups-btn:active{
+  transform:scale(.96);
+}
+
+/* 产业集群按钮：优化 */
+.cluster-btn{
+  transition:all .15s ease;
+}
+.cluster-btn:active{
+  transform:scale(.96);
+}
+
+/* 结果头部：优化 */
+.result-head{
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 1px 3px rgba(35,39,47,.04),0 4px 12px rgba(35,39,47,.05);
+}
+
+/* 筛选栏：优化 */
+.filter-bar{
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 1px 3px rgba(35,39,47,.04),0 4px 12px rgba(35,39,47,.05);
+}
+
+/* 定位条：优化 */
+.loc-scale{
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.1);
+}
+
+/* 表格：优化 */
+.line-table th{
+  background:linear-gradient(180deg,#F0F5FC,#EBF1FB);
+}
+
+/* footer：优化 */
+footer{
+  color:#9A938A;
+  padding:20px 20px 0;
+}
+
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="brand">
+      <svg viewBox="0 0 56 56" width="54" height="54" aria-hidden="true" role="img">
+        <circle cx="28" cy="28" r="26" fill="#FFFFFF" fill-opacity=".10"/>
+        <circle cx="28" cy="28" r="25.5" fill="none" stroke="#FFFFFF" stroke-opacity=".4" stroke-width="1.2"/>
+        <circle cx="28" cy="28" r="19" fill="none" stroke="#FFFFFF" stroke-opacity=".22" stroke-width="1"/>
+        <g stroke="#FFFFFF" stroke-opacity=".55" stroke-width="1.6" stroke-linecap="round">
+          <line x1="28" y1="7"  x2="28" y2="11.5"/>
+          <line x1="28" y1="44.5" x2="28" y2="49"/>
+          <line x1="7"  y1="28" x2="11.5" y2="28"/>
+          <line x1="44.5" y1="28" x2="49" y2="28"/>
+        </g>
+        <g transform="rotate(32 28 28)">
+          <polygon points="28,14 32.6,33 28,28.6 23.4,33" fill="#F7B24E"/>
+          <polygon points="28,14 32.6,33 28,28.6" fill="#FFD98A"/>
+          <circle cx="28" cy="28" r="3.2" fill="#FFFFFF"/>
+        </g>
+      </svg>
+      <div class="brand-name">
+        <h1>山西高考志愿导航</h1>
+        <div class="brand-sub">为孩子锚定可视化目标，保持学习动力</div>
+      </div>
+    </div>
+    <p class="hero-desc">很多孩子高考后才后悔没努力学习，就是因为他们不知道为什么学。为此，我手搓了这个系统，就是为了让孩子们看清自己在高考竞争中的位置，确定奋斗目标，最终真正为自己而努力学习。<span class="hero-sign">——抖音@大晟的升学经</span></p>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- 第一步：选科 -->
+  <section class="card">
+    <h2><span class="step-no">1</span>选科</h2>
+    <div class="field">
+      <label>首选科目</label>
+      <div class="seg" id="firstSeg">
+        <button type="button" data-v="物理" class="on">物理</button>
+        <button type="button" data-v="历史">历史</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>再选科目（化学 / 生物 / 政治 / 地理，选 2 门）</label>
+      <div class="chips" id="rechooseChips">
+        <button type="button" class="chip" data-v="化学">化学</button>
+        <button type="button" class="chip" data-v="生物">生物</button>
+        <button type="button" class="chip" data-v="政治">政治</button>
+        <button type="button" class="chip" data-v="地理">地理</button>
+      </div>
+      <p class="hint" id="rechooseHint">请选择 2 门再选科目</p>
+    </div>
+  </section>
+
+  <!-- 第二步：模考成绩 -->
+  <section class="card">
+    <h2><span class="step-no">2</span>模考成绩</h2>
+    <div class="field">
+      <label>模考分数（未赋分）</label>
+      <input class="inp" id="rawScore" type="number" inputmode="numeric" placeholder="如 450" min="0" max="750">
+    </div>
+    <div class="field">
+      <label>模考分数（已赋分）</label>
+      <input class="inp" id="scoredScore" type="number" inputmode="numeric" placeholder="如 520" min="0" max="750">
+      <p class="hint">已赋分与未赋分二选一；两项都填时按已赋分计算。</p>
+    </div>
+    <div class="field">
+      <label>模考本科线（没有可不填）</label>
+      <input class="inp" id="mockLine" type="number" inputmode="numeric" placeholder="如 400" min="0" max="750">
+      <p class="hint">填了模考本科线，将按“模考本科线 → 2026 真实本科线（物理 401 / 历史 409）”锚点折算目标分，更贴合孩子所处位置。</p>
+    </div>
+  </section>
+
+  <!-- 第三步：查询 -->
+  <section class="actions">
+    <button type="button" class="btn btn-blue" id="btnExisting">可选院校专业组</button>
+    <button type="button" class="btn btn-orange" id="btnMore">努力多考20分</button>
+    <button type="button" class="btn btn-purple" id="btnDream">✨ 梦中情校</button>
+  </section>
+
+  <!-- 结果 -->
+  <section id="results" hidden>
+    <div class="result-head">
+      <div class="result-title" id="resTitle"></div>
+      <div class="result-meta" id="resMeta"></div>
+      <div class="loc" id="locBlock">
+        <div class="loc-label"><span>保 · 低于目标5分以上</span><span>稳 · 目标下5分内</span></div>
+        <div class="loc-scale">
+          <div class="loc-zone loc-down" id="zoneDown"></div>
+          <div class="loc-zone loc-mid" id="zoneMid"></div>
+          <div class="loc-zone loc-up" id="zoneUp"></div>
+          <div class="loc-needle" id="locNeedle"></div>
+        </div>
+        <div class="loc-bounds"><span id="locLo"></span><span id="locMid"></span><span id="locHi"></span></div>
+      </div>
+    </div>
+    <div id="analysisBlock" hidden>
+      <div class="analysis-card">
+        <div class="analysis-title">考情分析 · 山西省2026年高考</div>
+        <div class="kaoqing-grid">
+          <div class="kq-item"><div class="kq-num" id="kqTotal"></div><div class="kq-label">总考生</div></div>
+          <div class="kq-item"><div class="kq-num" id="kqPhys"></div><div class="kq-label">物理类（占比）</div></div>
+          <div class="kq-item"><div class="kq-num" id="kqHist"></div><div class="kq-label">历史类（占比）</div></div>
+        </div>
+        <div class="line-table" id="lineTable"></div>
+      </div>
+      <div class="analysis-card">
+        <div class="analysis-title">成绩定位</div>
+        <div class="position-text" id="positionText"></div>
+        <div class="curve-wrap">
+          <div class="curve-label">山西省高考一分一段图（<span id="curveCat"></span>）</div>
+          <svg id="curveChart" viewBox="0 0 600 250" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="curve-legend">
+            <span><i class="lg-line lg-blue"></i>一分一段曲线</span>
+            <span><i class="lg-line lg-dash"></i>本科线 / 特控线</span>
+            <span><i class="lg-dot"></i>你的位置</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="filterBar" class="filter-bar" hidden>
+      <div class="filter-row">
+        <div class="filter-label">省份</div>
+        <div class="filter-chips" id="provChips"></div>
+      </div>
+      <div class="filter-row">
+        <div class="filter-label">层次</div>
+        <div class="filter-chips" id="levelChips"></div>
+      </div>
+      <div class="filter-row">
+        <div class="filter-label">类型</div>
+        <div class="filter-chips" id="typeChips"></div>
+      </div>
+      <div class="filter-op">
+        <button type="button" class="filter-reset" id="filterReset">重置筛选</button>
+        <span class="filter-count" id="filterCount"></span>
+      </div>
+    </div>
+    <div id="resultList"></div>
+  </section>
+
+  <footer>数据基于 2026 年山西省本科批投档线及位次（物理类 / 历史类）<br>仅作志愿定位参考，最终以省招考部门发布信息为准</footer>
+</main>
+
+<!-- 专业介绍弹窗 -->
+<div class="modal" id="majorModal" hidden>
+  <div class="modal-mask" data-close="majorModal"></div>
+  <div class="modal-sheet" role="dialog" aria-label="专业介绍">
+    <div class="modal-head">
+      <div class="modal-title" id="mmTitle"></div>
+      <button type="button" class="icon-btn" data-close="majorModal" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+    <div id="mmBody"></div>
+    <button type="button" class="same-btn" id="mmJobBtn">查看优质就业（院校所在省份央国企 &amp; 新兴产业）</button>
+    <button type="button" class="same-btn" id="mmSameBtn">查看同类专业（同专业类）</button>
+  </div>
+</div>
+
+<!-- 优质就业弹窗 -->
+<div class="modal" id="jobModal" hidden>
+  <div class="modal-mask" data-close="jobModal"></div>
+  <div class="modal-sheet" role="dialog" aria-label="优质就业">
+    <div class="modal-head">
+      <div class="modal-title" id="jmTitle"></div>
+      <button type="button" class="icon-btn" data-close="jobModal" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+    <div id="jmBody"></div>
+  </div>
+</div>
+
+<!-- 产业集群弹窗 -->
+<div class="modal" id="clusterModal" hidden>
+  <div class="modal-mask" data-close="clusterModal"></div>
+  <div class="modal-sheet" role="dialog" aria-label="产业集群">
+    <div class="modal-head">
+      <div class="modal-title" id="cmTitle"></div>
+      <button type="button" class="icon-btn" data-close="clusterModal" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+    <div id="cmBody"></div>
+    <button type="button" class="same-btn" data-close="clusterModal" style="margin-top:20px;">关闭</button>
+  </div>
+</div>
+
+<!-- 梦中情校搜索弹窗 -->
+<div class="modal" id="dreamModal" hidden>
+  <div class="modal-mask" data-close="dreamModal"></div>
+  <div class="modal-sheet" role="dialog" aria-label="梦中情校">
+    <div class="modal-head">
+      <div class="modal-title" style="color:#7C3AED;">✨ 梦中情校 · 搜索院校</div>
+      <button type="button" class="icon-btn" data-close="dreamModal" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+    <div class="dream-search-box">
+      <input type="text" class="dream-search-input" id="dreamInput" placeholder="输入院校名称，如：山西大学、太原师范..." autocomplete="off">
+    </div>
+    <div class="dream-subject">
+      <button type="button" class="dream-subject-btn on" data-sub="物理" id="dreamSubPhys">物理组</button>
+      <button type="button" class="dream-subject-btn" data-sub="历史" id="dreamSubHist">历史组</button>
+    </div>
+    <div class="dream-result-list" id="dreamResultList"></div>
+  </div>
+</div>
+
+<!-- 其他专业组弹窗 -->
+<div class="modal" id="otherModal" hidden>
+  <div class="modal-mask" data-close="otherModal"></div>
+  <div class="modal-sheet" role="dialog" aria-label="其他专业组">
+    <div class="modal-head">
+      <div class="modal-title" id="ogTitle" style="color:#3A6FD4;"></div>
+      <button type="button" class="icon-btn" data-close="otherModal" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+    <div class="og-list" id="ogList"></div>
+    <button type="button" class="same-btn" data-close="otherModal" style="margin-top:16px;">关闭</button>
+  </div>
+</div>
+
+<!-- 同类专业弹窗 -->
+<div class="modal" id="sameModal" hidden>
+  <div class="modal-mask" data-close="sameModal"></div>
+  <div class="modal-sheet" role="dialog" aria-label="同类专业">
+    <div class="modal-head">
+      <div class="modal-title" id="smTitle"></div>
+      <button type="button" class="icon-btn" data-close="sameModal" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+    <div id="smBody"></div>
+  </div>
+</div>
+
+<div id="toast" role="status"></div>
+
+<script>
+"use strict";
+/*__DATA__*/
+
+/* ===== 数据索引 ===== */
+const LINE = DATA.line;
+const INTRO = DATA.intro || {};
+const HIRECLS = DATA.hcls || {};   // 招聘词条 -> 专业类
+const majorClass = {};      // 专业名 -> 专业类
+const classInfo = {};       // 专业类 -> {meng, list:[{name,code,degree,years}]}
+(DATA.cat || []).forEach(function(c){
+  var meng=c[0], cls=c[1], code=c[2], name=c[3], degree=c[4], years=c[5];
+  if(!name) return;
+  majorClass[name]=cls;
+  if(!classInfo[cls]) classInfo[cls]={meng:meng,list:[]};
+  classInfo[cls].list.push({name:name,code:code,degree:degree,years:years});
+});
+Object.keys(classInfo).forEach(function(k){
+  classInfo[k].list.sort(function(a,b){return (a.code||0)-(b.code||0);});
+});
+
+/* ===== 状态 ===== */
+var state={ first:'物理', rechoose:[] };
+// 常用口语化别名：源数据中的习惯叫法 → 本科专业目录标准名
+var ALIAS={ '法律':'法学' };
+
+/* ===== 工具函数 ===== */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function toast(msg){
+  var t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('show');},2400);
+}
+function baseOf(token){ return String(token).split('(')[0].split('（')[0].trim(); }
+
+function openModal(id){ $(id).hidden=false; document.body.classList.add('no-scroll'); }
+function closeModal(id){
+  $(id).hidden=true;
+  // 只要没有可见弹窗就恢复滚动，避免计数残留导致页面锁死
+  if(!document.querySelector('.modal:not([hidden])')) document.body.classList.remove('no-scroll');
+}
+
+/* 选科匹配：'化学和生物' 拆分为 ['化学','生物']，全部命中才通过 */
+function matchReq(req, sel){
+  if(!req || req==='不限') return true;
+  var parts = req.split('和');
+  for(var i=0;i<parts.length;i++){ if(sel.indexOf(parts[i])<0) return false; }
+  return true;
+}
+
+/* ===== 目标分计算 ===== */
+function computeTargets(){
+  var isPhys = state.first==='物理';
+  var realLine = isPhys ? LINE.wl : LINE.ls;
+  var scored = parseFloat($('scoredScore').value);
+  var raw = parseFloat($('rawScore').value);
+  var mockLine = parseFloat($('mockLine').value);
+  var base, mode;
+  if(!isNaN(scored) && $('scoredScore').value!==''){ base=scored; mode='已赋分'; }
+  else if(!isNaN(raw) && $('rawScore').value!==''){ base=raw; mode='未赋分'; }
+  else { return null; }
+  var existing, how;
+  if(!isNaN(mockLine) && mockLine>0){
+    existing = realLine + (base - mockLine);   // 锚点校准
+    how = '按模考本科线锚点折算';
+  } else {
+    existing = base + (mode==='未赋分' ? 30 : 0);
+    how = (mode==='未赋分') ? '未赋分 +30 折算' : '已赋分直接使用';
+  }
+  existing = Math.round(existing);
+  return { existing:existing, more:existing+20, mode:mode, realLine:realLine, isPhys:isPhys, how:how, mockLineFilled: !isNaN(mockLine)&&mockLine>0 };
+}
+
+/* ===== 查询 ===== */
+function runQuery(kind){
+  var t = computeTargets();
+  if(!t){ toast('请先填写模考分数（未赋分或已赋分至少一项）'); return; }
+  if(state.rechoose.length!==2){ toast('请在再选科目中选择 2 门'); return; }
+  var target = kind==='more' ? t.more : t.existing;
+  var arr = state.first==='物理' ? DATA.wl : DATA.ls;
+  var lo = target-10, hi = target;
+  var sel = state.rechoose.slice();
+  var res = arr.filter(function(g){
+    return g[8] > 0 && g[8] >= lo && g[8] <= hi && matchReq(g[4], sel);
+  });
+  res.sort(function(a,b){ return b[8]-a[8]; });
+  renderResults(res, target, t, kind);
+  var top = $('results').getBoundingClientRect().top + window.pageYOffset - 12;
+  window.scrollTo({ top:top, behavior:'smooth' });
+}
+
+/* ===== 结果渲染 ===== */
+function groupBadge(group){
+  if(group.indexOf('合作办学')>=0) return {t:'中外合作', c:'o'};
+  if(group.indexOf('高校专项')>=0) return {t:'高校专项', c:'b'};
+  if(group.indexOf('国家专项')>=0) return {t:'国家专项', c:'b'};
+  if(group.indexOf('地方专项')>=0) return {t:'地方专项', c:'b'};
+  if(group.indexOf('定向')>=0) return {t:'定向', c:'b'};
+  if(group.indexOf('边防军人')>=0) return {t:'边防预科', c:'g'};
+  return null;
+}
+function diffInfo(score, target, kind){
+  if(kind === 'dream') return {cls:'', t:'', d:'投档线 '+score+' 分'};
+  var d = score - target;
+  var isMore = kind === 'more';
+  var label = isMore ? '目标' : '现分数';
+  if(d>0) return {cls:'tag-up', t:'冲', d:'高于'+label+' '+d+' 分'};
+  if(d===0) return {cls:'tag-mid', t:'稳', d:(isMore?'与目标持平':'现有分数')};
+  return {cls:'tag-down', t:'保', d:'低于'+label+' '+(-d)+' 分'};
+}
+var MINISTRY_MAP = {"哈尔滨工业大学": "航天部", "北京航空航天大学": "航天部", "西北工业大学": "航天部", "南京航空航天大学": "航天部", "南昌航空大学": "航天部", "沈阳航空航天大学": "航天部", "郑州航空工业管理学院": "航天部", "北华航天工业学院": "航天部", "桂林航天工业学院": "航天部", "西安航空学院": "航天部", "中国民航大学": "民航总局", "中国民用航空飞行学院": "民航总局", "北京理工大学": "兵器部", "南京理工大学": "兵器部", "长春理工大学": "兵器部", "中北大学": "兵器部", "西安工业大学": "兵器部", "沈阳理工大学": "兵器部", "重庆理工大学": "兵器部", "电子科技大学": "电子部", "西安电子科技大学": "电子部", "杭州电子科技大学": "电子部", "桂林电子科技大学": "电子部", "北京信息科技大学": "电子部", "中国地质大学": "地质部", "成都理工大学": "地质部", "河北地质大学": "地质部", "东华大学": "纺织部", "天津工业大学": "纺织部", "苏州大学": "纺织部", "西安工程大学": "纺织部", "浙江理工大学": "纺织部", "北京服装学院": "纺织部", "中原工学院": "纺织部", "武汉纺织大学": "纺织部", "南通大学": "纺织部", "华北电力大学": "水电部", "东北电力大学": "水电部", "三峡大学": "水电部", "长沙理工大学": "水电部", "上海电力大学": "水电部", "山西大学": "水电部", "沈阳工程学院": "水电部", "长春工程学院": "水电部", "南京工程学院": "水电部", "河海大学": "水利部", "华北水利水电大学": "水利部", "中国石油大学": "石油部", "东北石油大学": "石油部", "西安石油大学": "石油部", "长江大学": "石油部", "辽宁石油化工大学": "石油部", "常州大学": "石油部", "北京石油化工学院": "石油部", "广东石油化工学院": "石油部", "西南石油大学": "石油部", "北京化工大学": "化工部", "南京工业大学": "化工部", "郑州大学": "化工部", "青岛科技大学": "化工部", "沈阳化工大学": "化工部", "武汉工程大学": "化工部", "南京师范大学": "化工部", "江苏海洋大学": "化工部", "中国矿业大学": "煤炭部", "辽宁工程技术大学": "煤炭部", "山东科技大学": "煤炭部", "西安科技大学": "煤炭部", "河南理工大学": "煤炭部", "太原理工大学": "煤炭部", "安徽理工大学": "煤炭部", "华北理工大学": "煤炭部", "河北工程大学": "煤炭部", "山东工商学院": "煤炭部", "湖南科技大学": "煤炭部", "黑龙江科技大学": "煤炭部", "淮北师范大学": "煤炭部", "哈尔滨医科大学": "煤炭部", "北京科技大学": "冶金部", "东北大学": "冶金部", "西安建筑科技大学": "冶金部", "武汉科技大学": "冶金部", "辽宁科技大学": "冶金部", "安徽工业大学": "冶金部", "内蒙古科技大学": "冶金部", "青岛理工大学": "冶金部", "辽宁科技学院": "冶金部", "长春工业大学": "冶金部", "沈阳大学": "冶金部", "重庆科技大学": "冶金部", "黑龙江工程学院": "冶金部", "中南大学": "有色金属总公司", "昆明理工大学": "有色金属总公司", "北方工业大学": "有色金属总公司", "长春师范大学": "有色金属总公司", "江西理工大学": "有色金属总公司", "桂林理工大学": "有色金属总公司", "北华大学": "有色金属总公司", "湖南大学": "机械部", "合肥工业大学": "机械部", "江苏大学": "机械部", "燕山大学": "机械部", "西安理工大学": "机械部", "上海理工大学": "机械部", "沈阳工业大学": "机械部", "哈尔滨理工大学": "机械部", "兰州交通大学": "机械部", "河南科技大学": "机械部", "太原科技大学": "机械部", "湖北汽车工业学院": "机械部", "湖南工程学院": "机械部", "河南工业大学": "机械部", "大连海事大学": "交通部", "上海海事大学": "交通部", "重庆交通大学": "交通部", "山东交通学院": "交通部", "江南大学": "轻工部", "天津科技大学": "轻工部", "陕西科技大学": "轻工部", "北京工商大学": "轻工部", "景德镇陶瓷大学": "轻工部", "郑州轻工业大学": "轻工部", "大连工业大学": "轻工部", "西南交通大学": "铁道部", "北京交通大学": "铁道部", "大连交通大学": "铁道部", "华东交通大学": "铁道部", "石家庄铁道大学": "铁道部", "苏州科技大学": "铁道部", "沈阳建筑大学": "建设部", "重庆大学": "中建总公司", "武汉理工大学": "建材局", "西南科技大学": "建材局", "济南大学": "建材局", "洛阳理工学院": "建材局", "中国农业大学": "农业部", "南京农业大学": "农业部", "西北农林科技大学": "农业部", "华中农业大学": "农业部", "沈阳农业大学": "农业部", "华南农业大学": "农业部", "东北农业大学": "农业部", "西南大学": "农业部", "海南大学": "农业部", "上海海洋大学": "农业部", "石河子大学": "农业部", "大连海洋大学": "农业部", "塔里木大学": "农业部", "北京林业大学": "林业部", "东北林业大学": "林业部", "南京林业大学": "林业部", "中南林业科技大学": "林业部", "西南林业大学": "林业部", "北京协和医学院": "卫生部", "中国医科大学": "卫生部", "中国药科大学": "药监局", "沈阳药科大学": "药监局", "北京中医药大学": "中医药局", "广州中医药大学": "中医药局", "对外经济贸易大学": "外经贸部", "上海对外经贸大学": "外经贸部", "广东外语外贸大学": "外经贸部", "上海财经大学": "财政部", "中央财经大学": "财政部", "东北财经大学": "财政部", "江西财经大学": "财政部", "山东财经大学": "财政部", "西南财经大学": "人民银行", "河北金融学院": "人民银行", "哈尔滨金融学院": "人民银行", "上海立信会计金融学院": "人民银行", "南京审计大学": "人民银行", "湖北经济学院": "人民银行", "广东金融学院": "人民银行", "中央美术学院": "文化部", "中央戏剧学院": "文化部", "中国美术学院": "文化部", "中国戏曲学院": "文化部", "中国传媒大学": "文化部", "浙江工商大学": "商业部", "哈尔滨商业大学": "商业部", "天津商业大学": "商业部", "武汉轻工大学": "商业部", "北京物资学院": "商业部", "南京财经大学": "商业部", "重庆工商大学": "商业部", "兰州财经大学": "商业部", "四川旅游学院": "商业部", "北京体育大学": "国家体委", "上海体育大学": "国家体委", "成都体育学院": "国家体委", "武汉体育学院": "国家体委", "沈阳体育学院": "国家体委", "西安体育学院": "国家体委", "中国政法大学": "司法部", "西南政法大学": "司法部", "华东政法大学": "司法部", "西北政法大学": "司法部", "南京信息工程大学": "气象局", "成都信息工程大学": "气象局", "天津职业技术师范大学": "劳动部", "北京邮电大学": "邮电部", "南京邮电大学": "邮电部", "重庆邮电大学": "邮电部", "西安邮电大学": "邮电部", "哈尔滨工程大学": "船舶总公司", "江苏科技大学": "船舶总公司", "南华大学": "核工业总公司", "东华理工大学": "核工业总公司", "吉林财经大学": "税务总局", "中国计量大学": "质检总局", "北京第二外国语学院": "旅游局", "上海师范大学": "旅游局", "北京印刷学院": "出版总署", "山西财经大学": "供销总社", "安徽财经大学": "供销总社", "西安财经大学": "统计局", "湖南工业大学": "包装总公司", "应急管理大学": "地震局", "外交学院": "外交部", "中央民族大学": "国家民委", "大连民族大学": "国家民委", "中南民族大学": "国家民委", "西南民族大学": "国家民委", "西北民族大学": "国家民委", "北方民族大学": "国家民委", "暨南大学": "侨办", "华侨大学": "侨办", "上海海关学院": "海关总署", "中国劳动关系学院": "全国总工会", "中国科学技术大学": "中科院"};
+
+function cardHTML(g, target, kind){
+  var school=esc(g[0]), prov=esc(g[1]), city=esc(g[2]), group=esc(g[3]),
+      req=g[4], note=g[6], plan=g[7], score=g[8], rank=g[9], fee=g[10];
+  var bg = groupBadge(g[3]);
+  var badgeHtml = bg ? '<span class="badge badge-'+bg.c+'">'+esc(bg.t)+'</span>' : '';
+  var lvHtml = ((DATA.tag||{})[g[0]]||[]).map(function(t){
+    return '<span class="badge badge-'+(t==='985'?'b':t==='211'?'g':'o')+'">'+t+'</span>';
+  }).join('');
+  var di = diffInfo(score, target, kind);
+  var reqHtml = req ? '<span>选科要求：'+esc(req)+'</span>' : '';
+  var planHtml = '<span>计划 '+plan+' 人</span>';
+  var rankHtml = rank ? '<span>位次 '+rank.toLocaleString()+'</span>' : '<span>位次 —</span>';
+  var feeHtml = fee ? '<span class="g-fee">学费 ¥'+esc(fee)+'</span>' : '';
+  var _tierMap = DATA.tier || {};
+  var _catKey = state.first === '物理' ? 'wl' : 'ls';
+  var majorsHtml = (g[5]||[]).map(function(m){
+    var _base = m.replace(/[（(][^）)]*[）)]/g,'').trim();
+    var _t = (_tierMap[_catKey]||{})[_base];
+    var _cls = 'major-chip' + (_t ? ' tier'+_t : '');
+    return '<button type="button" class="'+_cls+'" data-major="'+esc(m).replace(/"/g,'&quot;')+'" data-prov="'+esc(g[1]).replace(/"/g,'&quot;')+'">'+esc(m)+'</button>';
+  }).join('');
+  var noteHtml = note ? '<details class="g-note"><summary>专业备注</summary><p>'+esc(note)+'</p></details>' : '';
+  return ''+
+  '<article class="g-card">'+
+    '<div class="g-top">'+
+      '<div><div class="g-school"><span>'+school+'</span>'+badgeHtml+lvHtml+(MINISTRY_MAP[g[0].replace(/[（(][^）)]*[）)]/g,'').trim()]?'<span class="badge badge-min">'+MINISTRY_MAP[g[0].replace(/[（(][^）)]*[）)]/g,'').trim()]+'</span>':'')+'<span class="st-tag">'+((DATA.st||{})[g[0]]||'其他')+'</span>'+
+      (((DATA.cluster||{})[g[2]]||[]).length>0 ? '<button type="button" class="cluster-btn" data-city="'+esc(g[2]).replace(/"/g,'&quot;')+'">🏭 产业集群</button>' : '')+'</div>'+
+      '<div class="g-meta"><span class="prov-city">'+prov+' · '+city+'</span></div>'+
+      '<div class="g-meta">'+esc(g[3])+'</div>'+
+      '<div class="g-meta">'+reqHtml+' · '+planHtml+'</div></div>'+
+      '<div class="g-score-box">'+
+        '<div class="g-score">'+score+'<span style="font-size:12px;font-weight:700;color:var(--muted)"> 分</span></div>'+
+        '<div class="g-rank">'+rankHtml+'</div>'+
+        (di.t ? '<div style="margin-top:6px"><span class="tag '+di.cls+'">'+di.t+'</span></div>' : '')+
+      '</div>'+
+    '</div>'+
+    '<hr class="g-line">'+
+    '<div class="major-label">组内专业（点击查看专业介绍）</div>'+
+    '<div class="major-chips">'+majorsHtml+'</div>'+
+    (noteHtml?noteHtml:'')+
+    '<div class="g-foot"><span>'+esc(di.d)+'</span>'+
+    '<div style="display:flex;align-items:center;gap:10px;">'+feeHtml+
+    '<button type="button" class="other-groups-btn" data-school="'+esc(g[0]).replace(/"/g,'&quot;')+'" data-group="'+esc(g[3]).replace(/"/g,'&quot;')+'" data-score="'+g[8]+'" data-sub="'+(state.first||'物理')+'">其他专业组</button>'+
+    '</div></div>'+
+  '</article>';
+}
+
+function renderResults(arr, target, t, kind){
+  $('locBlock').hidden = false;
+  $('resTitle').innerHTML = (kind==='more' ? '多考 20 分后 · 目标分 ' : '现有分数 ')
+    + '<span class="target-num">'+target+'</span> 分';
+  var kindText = kind==='more' ? '多考20分后（在目标分上再 +20）' : '现有分数';
+  $('resMeta').innerHTML =
+    '匹配区间：<b>'+(target-10)+' ~ '+target+' 分</b>　命中 <b>'+arr.length+'</b> 个专业组<br>'+
+    '折算方式：'+esc(t.how)+'（首选'+esc(state.first)+'，'+esc(t.mode)+'）<br>'+
+    '<span style="font-size:12px;color:var(--muted);line-height:1.6;">（专业组的分数均为投档分，即最低分专业的录取分数，想要录取组内的高分专业，还需比投档分高几分到几十分）</span>';
+  // 定位条（区间：目标分向下10分，保区=下5分以上，稳区=下5分内）
+  var lo=target-10, hi=target;
+  $('zoneDown').style.width='50%';
+  $('zoneMid').style.width='50%';
+  $('zoneUp').style.width='0%';
+  $('locNeedle').style.left='100%';
+  $('locLo').textContent=lo+' 分';
+  $('locMid').textContent=(target-5)+' 分';
+  $('locHi').textContent=target+' 分';
+  $('results').hidden=false;
+  // 考情分析 + 成绩定位（先于专业组列表展示）
+  $('analysisBlock').hidden = false;
+  renderKaoqing();
+  renderPosition(target, t.isPhys);
+  var list = $('resultList');
+  if(arr.length>0){
+    _lastRawArr = arr.slice();
+    resetFilterUI();
+    $('filterBar').hidden=false;
+    $('filterCount').textContent='共 '+arr.length+' 个专业组（可点上方按钮按省份 / 985·211·双一流 筛选）';
+  } else {
+    $('filterBar').hidden=true;
+  }
+  if(arr.length===0){
+    var tip;
+    if(target < t.realLine){
+      tip = '目标分 <b>'+target+'</b> 低于 '+(t.isPhys?'物理':'历史')+'组本科线 <b>'+t.realLine+'</b> 分，本批次内暂无匹配的本科专业组。<br>孩子目前距离本科线还有差距，请先聚焦提分；冲刺本科线后再回来定位志愿。';
+    } else {
+      tip = '目标分 <b>'+target+'</b> 上下 5 分（'+lo+'~'+hi+'）内，暂无符合所选再选科目的专业组。<br>可尝试调整再选科目，或适当放宽分数范围后再查询。';
+    }
+    list.innerHTML = '<div class="empty">'+tip+'</div>';
+    _resState=null;
+  } else {
+    list.innerHTML='';
+    _resState={arr:arr, target:target, kind:kind, page:0, perPage:40};
+    renderChunk();
+  }
+}
+
+/* ===== 考情分析 / 成绩定位 / 一分一段图 ===== */
+var EXAM = {
+  total: 262326,
+  wl: { count: 177132, pct: 67.5, line: 401, lineRank: 129364, spe: 524, speRank: 53482 },
+  ls: { count: 85194,  pct: 32.5, line: 409, lineRank: 35387,  spe: 538, speRank: 8512 }
+};
+
+function estimateRank(score, curve) {
+  if (!curve || curve.length === 0) return null;
+  if (score <= curve[0][0]) return curve[0][1];
+  if (score >= curve[curve.length - 1][0]) return curve[curve.length - 1][1];
+  for (var i = 0; i < curve.length - 1; i++) {
+    var s0 = curve[i][0], r0 = curve[i][1];
+    var s1 = curve[i + 1][0], r1 = curve[i + 1][1];
+    if (score >= s0 && score <= s1) {
+      if (s1 === s0) return r0;
+      return Math.round(r0 + (score - s0) / (s1 - s0) * (r1 - r0));
+    }
+  }
+  return null;
+}
+
+function renderKaoqing() {
+  $('kqTotal').textContent = EXAM.total.toLocaleString();
+  $('kqPhys').textContent = EXAM.wl.count.toLocaleString() + '（' + EXAM.wl.pct + '%）';
+  $('kqHist').textContent = EXAM.ls.count.toLocaleString() + '（' + EXAM.ls.pct + '%）';
+  var html = '<table class="line-table"><thead><tr><th>类别</th><th>本科线</th><th>本科线位次</th><th>特控线</th><th>特控线位次</th></tr></thead><tbody>';
+  html += '<tr><td>物理类</td><td class="hl">' + EXAM.wl.line + '分</td><td>' + EXAM.wl.lineRank.toLocaleString() + '</td><td class="hl">' + EXAM.wl.spe + '分</td><td>' + EXAM.wl.speRank.toLocaleString() + '</td></tr>';
+  html += '<tr><td>历史类</td><td class="hl">' + EXAM.ls.line + '分</td><td>' + EXAM.ls.lineRank.toLocaleString() + '</td><td class="hl">' + EXAM.ls.spe + '分</td><td>' + EXAM.ls.speRank.toLocaleString() + '</td></tr>';
+  html += '</tbody></table>';
+  $('lineTable').innerHTML = html;
+}
+
+function renderCurveChart(target, isPhys) {
+  var svg = $('curveChart');
+  var curve = isPhys ? DATA.curve.wl : DATA.curve.ls;
+  var ex = isPhys ? EXAM.wl : EXAM.ls;
+  $('curveCat').textContent = isPhys ? '物理类' : '历史类';
+  var xMin = ex.line - 10;
+  var xMax = Math.max(curve[curve.length - 1][0], target + 15);
+  var yMax = ex.lineRank;
+  var PL = 50, PR = 14, PT = 20, PB = 34, W = 600, H = 250;
+  var pw = W - PL - PR, ph = H - PT - PB;
+  function sx(sc) { return PL + (sc - xMin) / (xMax - xMin) * pw; }
+  function sy(rk) { return PT + (1 - rk / yMax) * ph; }
+  var parts = [];
+  parts.push('<rect x="' + PL + '" y="' + PT + '" width="' + pw + '" height="' + ph + '" fill="#fff" stroke="#e5e0d6" stroke-width="1"/>');
+  for (var i = 0; i <= 5; i++) {
+    var rk = Math.round(yMax * i / 5);
+    var y = sy(rk);
+    parts.push('<line x1="' + PL + '" y1="' + y + '" x2="' + (W - PR) + '" y2="' + y + '" stroke="#f0ece3" stroke-width="1"/>');
+    parts.push('<text x="' + (PL - 6) + '" y="' + (y + 4) + '" text-anchor="end" font-size="10" fill="#999">' + (rk >= 10000 ? (rk / 10000).toFixed(1) + '万' : rk) + '</text>');
+  }
+  for (var j = 0; j <= 6; j++) {
+    var sc = Math.round(xMin + (xMax - xMin) * j / 6);
+    var x = sx(sc);
+    parts.push('<line x1="' + x + '" y1="' + PT + '" x2="' + x + '" y2="' + (H - PB) + '" stroke="#f0ece3" stroke-width="1"/>');
+    parts.push('<text x="' + x + '" y="' + (H - PB + 16) + '" text-anchor="middle" font-size="10" fill="#999">' + sc + '</text>');
+  }
+  var pathD = '';
+  for (var k = 0; k < curve.length; k++) {
+    var sc2 = curve[k][0], rk2 = curve[k][1];
+    if (sc2 < xMin || sc2 > xMax) continue;
+    var px = sx(sc2), py = sy(rk2);
+    pathD += (pathD ? 'L' : 'M') + px.toFixed(1) + ',' + py.toFixed(1) + ' ';
+  }
+  parts.push('<path d="' + pathD + '" fill="none" stroke="#2b5ea7" stroke-width="2"/>');
+  var lx = sx(ex.line);
+  parts.push('<line x1="' + lx + '" y1="' + PT + '" x2="' + lx + '" y2="' + (H - PB) + '" stroke="#e07b39" stroke-width="1.5" stroke-dasharray="5,3"/>');
+  parts.push('<text x="' + lx + '" y="' + (PT + 12) + '" text-anchor="middle" font-size="10" fill="#e07b39" font-weight="700">本科线' + ex.line + '</text>');
+  var spx = sx(ex.spe);
+  if (spx < W - PR - 20) {
+    parts.push('<line x1="' + spx + '" y1="' + PT + '" x2="' + spx + '" y2="' + (H - PB) + '" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="5,3"/>');
+    parts.push('<text x="' + spx + '" y="' + (PT + 12) + '" text-anchor="middle" font-size="10" fill="#c0392b" font-weight="700">特控线' + ex.spe + '</text>');
+  }
+  var rank = estimateRank(target, curve);
+  if (rank !== null) {
+    var tx = sx(target), ty = sy(rank);
+    if (ty < PT + 20) ty = PT + 20;
+    parts.push('<circle cx="' + tx + '" cy="' + ty + '" r="6" fill="#e07b39" stroke="#fff" stroke-width="2"/>');
+    parts.push('<text x="' + tx + '" y="' + (ty - 12) + '" text-anchor="middle" font-size="11" fill="#e07b39" font-weight="700">' + target + '分/' + rank + '位</text>');
+  }
+  parts.push('<text x="' + (W / 2) + '" y="' + (H - 2) + '" text-anchor="middle" font-size="11" fill="#888">分数</text>');
+  parts.push('<text x="12" y="' + (H / 2) + '" text-anchor="middle" font-size="11" fill="#888" transform="rotate(-90,12,' + (H / 2) + ')">位次</text>');
+  svg.innerHTML = parts.join('');
+}
+
+function renderPosition(target, isPhys) {
+  var ex = isPhys ? EXAM.wl : EXAM.ls;
+  var curve = isPhys ? DATA.curve.wl : DATA.curve.ls;
+  var rank = estimateRank(target, curve);
+  var total = ex.count;
+  var text = '';
+  if (target >= ex.spe) {
+    var pct = rank ? ((total - rank) / total * 100).toFixed(1) : '—';
+    text = '考生的分数<b>超过特控线 ' + (target - ex.spe) + ' 分</b>，排名 <b>' + (rank ? rank.toLocaleString() : '—') + '</b> 位次，超过 <b>' + pct + '%</b> 的高考生。可报考省重点、国重点、双一流、211、985等高层次院校。';
+  } else if (target >= ex.line) {
+    var pct2 = rank ? ((total - rank) / total * 100).toFixed(1) : '—';
+    text = '考生的分数<b>超过本科线 ' + (target - ex.line) + ' 分</b>，排名 <b>' + (rank ? rank.toLocaleString() : '—') + '</b> 位次，超过 <b>' + pct2 + '%</b> 的高考生。可报考普通公办本科和民办本科。';
+  } else {
+    text = '考生的分数距本科线还差 <b>' + (ex.line - target) + ' 分</b>，当前暂无匹配的本科专业组。请继续努力提分，冲刺本科线后再回来定位。';
+  }
+  $('positionText').innerHTML = text;
+  renderCurveChart(target, isPhys);
+}
+
+/* ===== 结果筛选（省份 + 985/211/双一流） ===== */
+var PROVS31 = ['北京','天津','河北','山西','内蒙古','辽宁','吉林','黑龙江','上海','江苏','浙江','安徽','福建','江西','山东','河南','湖北','湖南','广东','广西','海南','重庆','四川','贵州','云南','西藏','陕西','甘肃','青海','宁夏','新疆'];
+var _filter = {provs:[], levels:[], types:[], ministry:false};
+var _lastRawArr = null;
+function toggleArr(a,v){ var i=a.indexOf(v); if(i>=0){a.splice(i,1);} else {a.push(v);} }
+function resetFilterUI(){
+  _filter.provs.length=0; _filter.levels.length=0; _filter.types.length=0; _filter.ministry=false;
+  var mn=$('ministryChip'); if(mn) mn.classList.remove('on');
+  var c=$('provChips'); if(c){ var p=c.querySelectorAll('.f-chip'); for(var i=0;i<p.length;i++) p[i].classList.remove('on'); }
+  var l=$('levelChips'); if(l){ var q=l.querySelectorAll('.f-chip'); for(var j=0;j<q.length;j++) q[j].classList.remove('on'); }
+  var t=$('typeChips'); if(t){ var r=t.querySelectorAll('.f-chip'); for(var k=0;k<r.length;k++) r[k].classList.remove('on'); }
+}
+function applyFilter(){
+  var st=_resState; if(!st) return;
+  var base = _lastRawArr || st.arr;
+  var filtered = base.filter(function(g){
+    if(_filter.provs.length>0 && _filter.provs.indexOf(normProv(g[1]))<0) return false;
+    if(_filter.levels.length>0){
+      var tags=(DATA.tag||{})[g[0]]||[];
+      var ok=false;
+      for(var k=0;k<_filter.levels.length;k++){ if(tags.indexOf(_filter.levels[k])>=0){ok=true;break;} }
+      if(!ok) return false;
+    }
+    if(_filter.types.length>0){
+      var st=(DATA.st||{})[g[0]]||'其他';
+      if(_filter.types.indexOf(st)<0) return false;
+    }
+    if(_filter.ministry && !MINISTRY_MAP[g[0].replace(/[（(][^）)]*[）)]/g,'').trim()]) return false;
+    return true;
+  });
+  st.arr=filtered; st.page=0;
+  var list=$('resultList'); list.innerHTML='';
+  if(filtered.length===0){
+    list.innerHTML='<div class="empty">当前筛选条件下暂无匹配的专业组，可点击「重置筛选」或减少筛选条件后查看。</div>';
+    $('filterCount').textContent='筛选后 0 个专业组 / 共 '+base.length+' 个';
+  } else {
+    renderChunk();
+    $('filterCount').textContent='筛选后 '+filtered.length+' 个专业组 / 共 '+base.length+' 个';
+  }
+}
+function initFilter(){
+  $('provChips').innerHTML = PROVS31.map(function(p){
+    return '<button type="button" class="f-chip" data-p="'+p+'">'+p+'</button>';
+  }).join('');
+  $('levelChips').innerHTML = ['985','211','双一流'].map(function(l){
+    return '<button type="button" class="f-chip f-chip-lv" data-l="'+l+'">'+l+'</button>';
+  }).join('') + '<button type="button" class="f-chip f-chip-lv" id="ministryChip">行业特色</button>';
+  $('provChips').addEventListener('click', function(e){
+    var b=e.target.closest('.f-chip'); if(!b) return;
+    var p=b.getAttribute('data-p');
+    toggleArr(_filter.provs, p);
+    b.classList.toggle('on', _filter.provs.indexOf(p)>=0);
+    applyFilter();
+  });
+  $('levelChips').addEventListener('click', function(e){
+    var b=e.target.closest('.f-chip'); if(!b) return;
+    if(b.id==='ministryChip'){
+      _filter.ministry = !_filter.ministry;
+      b.classList.toggle('on', _filter.ministry);
+      applyFilter();
+      return;
+    }
+    var l=b.getAttribute('data-l');
+    toggleArr(_filter.levels, l);
+    b.classList.toggle('on', _filter.levels.indexOf(l)>=0);
+    applyFilter();
+  });
+  var ST_TYPES = ['综合','理工','师范','医药','农林','财经','政法','语言','体育','艺术','民族','其他'];
+  $('typeChips').innerHTML = ST_TYPES.map(function(t){
+    return '<button type="button" class="f-chip" data-t="'+t+'">'+t+'</button>';
+  }).join('');
+  $('typeChips').addEventListener('click', function(e){
+    var b=e.target.closest('.f-chip'); if(!b) return;
+    var t=b.getAttribute('data-t');
+    toggleArr(_filter.types, t);
+    b.classList.toggle('on', _filter.types.indexOf(t)>=0);
+    applyFilter();
+  });
+  $('filterReset').addEventListener('click', function(){
+    resetFilterUI();
+    applyFilter();
+  });
+}
+
+/* ===== 结果分批渲染 ===== */
+var _resState=null;
+var _loadMoreBtn=null;
+function renderChunk(){
+  var st=_resState; if(!st) return;
+  var start=st.page*st.perPage, end=Math.min(start+st.perPage, st.arr.length);
+  var frag=document.createElement('div');
+  for(var i=start;i<end;i++){ frag.insertAdjacentHTML('beforeend', cardHTML(st.arr[i], st.target, st.kind)); }
+  $('resultList').appendChild(frag);
+  st.page++;
+  if(_loadMoreBtn){ _loadMoreBtn.remove(); _loadMoreBtn=null; }
+  if(end<st.arr.length){
+    _loadMoreBtn=document.createElement('button');
+    _loadMoreBtn.type='button'; _loadMoreBtn.className='load-more';
+    _loadMoreBtn.textContent='加载更多（剩余 '+(st.arr.length-end)+' 组）';
+    _loadMoreBtn.addEventListener('click', renderChunk);
+    $('resultList').appendChild(_loadMoreBtn);
+  } else {
+    var all=document.createElement('div'); all.className='all-shown';
+    all.textContent='已显示全部 '+st.arr.length+' 个专业组';
+    $('resultList').appendChild(all);
+  }
+}
+
+/* ===== 专业解析（模糊匹配）===== */
+function lev(a,b){
+  var m=a.length,n=b.length;
+  if(m===0) return n; if(n===0) return m;
+  var prev=new Array(n+1), cur=new Array(n+1), i, j;
+  for(j=0;j<=n;j++) prev[j]=j;
+  for(i=1;i<=m;i++){
+    cur[0]=i;
+    for(j=1;j<=n;j++){
+      var cost = a[i-1]===b[j-1]?0:1;
+      cur[j]=Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+cost);
+    }
+    var tmp=prev; prev=cur; cur=tmp;
+  }
+  return prev[n];
+}
+function resolveMajor(base){
+  if(INTRO[base] || majorClass[base]) return {name:base, cls:majorClass[base], fuzzy:false};
+  if(!base || base.length<2) return null;
+  // 常用口语化别名
+  if(ALIAS[base]) return {name:ALIAS[base], cls:majorClass[ALIAS[base]], fuzzy:true};
+  // A. base 是某目录专业名的前缀（源数据截断了专业名，如“汉语言文”→“汉语言文学”）→ 选长度最接近的
+  var aBest=null;
+  for(var name in majorClass){
+    if(name.length>base.length && name.indexOf(base)===0){
+      var diff=name.length-base.length;
+      if(!aBest || diff<aBest.diff) aBest={name:name, cls:majorClass[name], diff:diff, fuzzy:true};
+    }
+  }
+  if(aBest) return aBest;
+  // B. 某目录专业名是 base 的前缀（源数据带后缀，如“软件工程技术”→“软件工程”）→ 选最长的
+  var bBest=null;
+  for(var nm in majorClass){
+    if(nm.length<base.length && base.indexOf(nm)===0){
+      if(!bBest || nm.length>bBest.name.length) bBest={name:nm, cls:majorClass[nm], fuzzy:true};
+    }
+  }
+  if(bBest) return bBest;
+  // C. 编辑距离模糊（处理源数据错别字，如“思想政治孝育”→“思想政治教育”）：前两字相同
+  var c2=null;
+  for(var nm2 in majorClass){
+    if(nm2.length<2 || nm2[0]!==base[0] || nm2[1]!==base[1]) continue;
+    var d=lev(base,nm2);
+    var sim=1-d/Math.max(base.length,nm2.length);
+    if(sim>=0.55 && (!c2 || sim>c2.sim)) c2={name:nm2, cls:majorClass[nm2], sim:sim, fuzzy:true};
+  }
+  return c2;
+}
+
+/* ===== 弹窗：专业介绍 ===== */
+var mmState={}; // {cls, base, prov, isClass}
+
+function openMajor(token, prov){
+  prov = prov || '';
+  var base=baseOf(token);
+  var title=$('mmTitle'), body=$('mmBody'), sameBtn=$('mmSameBtn'), jobBtn=$('mmJobBtn');
+  if(prov){ jobBtn.style.display=''; jobBtn.textContent='查看优质就业（'+prov+' 央国企 & 新兴产业）'; }
+  else{ jobBtn.style.display='none'; }
+  // 专业类级：直接展示该专业类全部专业
+  if(classInfo[base] && !majorClass[base]){
+    title.textContent = base+'（专业类）';
+    body.innerHTML =
+      '<div class="m-cat">'+esc(classInfo[base].meng)+'门类 · '+esc(base)+'类 · 共 '+classInfo[base].list.length+' 个专业</div>'+
+      '<div class="m-block"><div class="m-label">该类包含的专业</div>'+
+      '<div class="major-list">'+classInfo[base].list.map(function(m){
+        return '<button type="button" class="major-row" data-major="'+esc(m.name)+'" data-prov="'+esc(prov)+'">'+
+          '<div class="m-name">'+esc(m.name)+'</div>'+
+          '<div class="m-sub"><span>'+esc(m.code||'—')+'</span><span>'+esc(m.degree||'')+'</span><span>'+esc(m.years||'')+'</span></div>'+
+        '</button>';
+      }).join('')+'</div></div>';
+    sameBtn.style.display='none';
+    mmState={cls:base, base:base, isClass:true, prov:prov};
+    openModal('majorModal');
+    return;
+  }
+  var res=resolveMajor(base);
+  if(!res){
+    title.textContent = base;
+    var clsHint = (base.indexOf('试验班')>=0 || base.indexOf('预科')>=0)
+      ? '<div class="fuzzy-note">这可能是大类招生 / 试验班 / 预科班的组名，具体包含专业请以院校招生章程为准。</div>'
+      : '';
+    body.innerHTML =
+      '<div class="m-block"><div class="m-text">该专业暂未收录于《本科专业目录 2026 版》（可能为职业本科、大类名称或新增特设专业），暂无一句话简介。</div></div>'+
+      clsHint+
+      '<div class="fuzzy-note">数据来源：本科专业一句话优缺点 · 普通本科专业目录 2026 版。</div>';
+    sameBtn.style.display='none';
+    mmState={cls:null, base:base, isClass:false, prov:prov};
+    openModal('majorModal');
+    return;
+  }
+  var info = INTRO[res.name];
+  title.textContent = res.name;
+  var html = '';
+  if(res.fuzzy && res.name!==base){
+    html += '<div class="fuzzy-note">院校组内写的是“'+esc(base)+'”，已为你匹配到相近专业“'+esc(res.name)+'”的介绍。</div>';
+  }
+  if(info){
+    html += '<div class="m-block"><div class="m-label">一句话简介</div><div class="m-text">'+esc(info[0])+'</div></div>';
+    if(info[1]) html += '<div class="m-block"><div class="m-label">优点</div><div class="m-text pro">'+esc(info[1])+'</div></div>';
+    if(info[2]) html += '<div class="m-block"><div class="m-label">缺点</div><div class="m-text con">'+esc(info[2])+'</div></div>';
+    html += '<div class="m-cat" style="margin-top:12px">专业类：'+esc(res.cls||'—')+'　·　门类：'+esc((res.cls&&classInfo[res.cls]?classInfo[res.cls].meng:'—'))+'</div>';
+  } else {
+    html += '<div class="m-empty">未找到该专业的一句话简介。</div>';
+  }
+  body.innerHTML=html;
+  sameBtn.style.display = (res.cls && classInfo[res.cls]) ? '' : 'none';
+  sameBtn.textContent = '查看同类专业（'+(res.cls||'').replace(/类$/,'')+'类）';
+  mmState={cls:res.cls, base:res.name, isClass:false, prov:prov};
+  openModal('majorModal');
+}
+
+/* ===== 弹窗：优质就业 ===== */
+function normProv(p){
+  if(!p) return '';
+  return String(p).replace('维吾尔自治区','').replace('壮族自治区','').replace('回族自治区','').replace('自治区','').replace('省','').replace('市','');
+}
+function soeTag(t){
+  if(t.indexOf('央企')>=0) return '<span class="badge badge-b">央企</span>';
+  if(t.indexOf('省属')>=0) return '<span class="badge badge-g">省属国企</span>';
+  if(t.indexOf('市属')>=0 || t.indexOf('区属')>=0) return '<span class="badge badge-o">地方国企</span>';
+  return '';
+}
+function xcyTag(t){
+  if(t.indexOf('龙头')>=0) return '<span class="badge badge-o">龙头</span>';
+  if(t.indexOf('独角兽')>=0) return '<span class="badge badge-b">独角兽</span>';
+  return '<span class="badge badge-g">重点</span>';
+}
+function soeRow(r){
+  var name=r[0]||r[1], full=r[1], typ=r[2], grp=r[3], main=r[4], hire=r[5];
+  return '<div class="job-row">'+
+    '<div class="job-name">'+esc(name)+soeTag(typ)+'</div>'+
+    ((full&&full!==name)?'<div class="job-sub">'+esc(full)+'</div>':'')+
+    (grp?'<div class="job-line">所属集团：'+esc(grp)+'</div>':'')+
+    (main?'<div class="job-line">主营：'+esc(main)+'</div>':'')+
+    (hire?'<div class="job-line hire">招聘需求：'+esc(hire)+'</div>':'')+
+  '</div>';
+}
+function xcyRow(r){
+  return '<div class="job-row">'+
+    '<div class="job-name">'+esc(r[0])+xcyTag(r[1])+'</div>'+
+    '<div class="job-sub">'+esc(r[2])+((r[3])?' · '+esc(r[3]):'')+'</div>'+
+    '<div class="job-line">总部：'+esc(r[4])+((r[5])?'　基地：'+esc(r[5]):'')+'</div>'+
+    (r[6]?'<div class="job-line">营收：'+esc(r[6])+'</div>':'')+
+    (r[7]?'<div class="job-line hire">招聘需求：'+esc(r[7])+'</div>':'')+
+  '</div>';
+}
+function hireTok(s){
+  return String(s||'').replace(/[（(][^）)]*[）)]/g,'').split(/[、，,;；\/／\s]+/).map(function(t){return t.trim();}).filter(Boolean);
+}
+function hireMatch(h){
+  if(!h) return false;
+  // 招聘方向标注"不限"（如公务员/事业单位不限专业）→ 全部命中
+  if(h.indexOf('不限')>=0) return true;
+  var name=mmState.base||'', cls=mmState.cls||'';
+  if(!name) return false;
+  var terms=hireTok(h);
+  // 招聘词条按专业类匹配（含“计算机类/电气工程类/微电子/机械设计”等写法）
+  if(cls){
+    for(var i=0;i<terms.length;i++){
+      var arr=HIRECLS[terms[i]];
+      if(arr && arr.indexOf(cls)>=0) return true;
+    }
+  }
+  // 词条直接命中完整专业名（词条==专业名 或 以专业名开头）
+  if(!mmState.isClass){
+    for(var j=0;j<terms.length;j++){
+      if(terms[j]===name || terms[j].indexOf(name)===0) return true;
+    }
+  }
+  return false;
+}
+function extraTag(t){
+  if(t.indexOf('体制内')>=0) return '<span class="badge badge-g">体制内</span>';
+  if(t.indexOf('央企')>=0) return '<span class="badge badge-b">央企</span>';
+  if(t.indexOf('省属')>=0 || t.indexOf('地方')>=0) return '<span class="badge badge-b">国企</span>';
+  return '<span class="badge badge-o">企业</span>';
+}
+function extraRow(e){
+  return '<div class="job-row">'+
+    '<div class="job-name">'+esc(e[0])+extraTag(e[1])+'</div>'+
+    '<div class="job-sub">'+esc(e[1])+' · '+esc(e[2])+'</div>'+
+    '<div class="job-line">招聘方向：'+esc(e[3])+'</div>'+
+    (e[5]?'<div class="job-line hire">'+esc(e[4])+'　<a href="'+esc(e[5])+'" target="_blank" rel="noopener" style="color:var(--blue-deep);text-decoration:underline">查看来源</a></div>':'')+
+  '</div>';
+}
+/* ===== 银行系统数据（国有银行+地方性银行） ===== */
+var BANK_NATIONAL = [
+  {name:'中国工商银行',type:'国有大型商业银行'},{name:'中国农业银行',type:'国有大型商业银行'},
+  {name:'中国银行',type:'国有大型商业银行'},{name:'中国建设银行',type:'国有大型商业银行'},
+  {name:'交通银行',type:'国有大型商业银行'},{name:'中国邮政储蓄银行',type:'国有大型商业银行'},
+  {name:'国家开发银行',type:'政策性银行'},{name:'中国进出口银行',type:'政策性银行'},
+  {name:'中国农业发展银行',type:'政策性银行'},
+  {name:'招商银行',type:'股份制商业银行'},{name:'上海浦东发展银行',type:'股份制商业银行'},
+  {name:'中信银行',type:'股份制商业银行'},{name:'中国光大银行',type:'股份制商业银行'},
+  {name:'华夏银行',type:'股份制商业银行'},{name:'中国民生银行',type:'股份制商业银行'},
+  {name:'广发银行',type:'股份制商业银行'},{name:'兴业银行',type:'股份制商业银行'},
+  {name:'平安银行',type:'股份制商业银行'},{name:'浙商银行',type:'股份制商业银行'},
+  {name:'恒丰银行',type:'股份制商业银行'},{name:'渤海银行',type:'股份制商业银行'}
+];
+var BANK_LOCAL = {
+  '山西':['晋商银行','山西银行','山西省农村信用社联合社'],
+  '北京':['北京银行','北京农商银行'],
+  '上海':['上海银行','上海农商银行'],
+  '天津':['天津银行','天津农商银行'],
+  '重庆':['重庆银行','重庆农商银行'],
+  '河北':['河北银行','唐山银行','沧州银行','河北省农村信用社'],
+  '河南':['郑州银行','中原银行','洛阳银行','河南省农村信用社'],
+  '山东':['齐鲁银行','青岛银行','威海市商业银行','山东省农村信用社'],
+  '江苏':['江苏银行','南京银行','苏州银行','江苏农商银行'],
+  '浙江':['杭州银行','宁波银行','温州银行','浙江省农村信用社'],
+  '安徽':['徽商银行','安徽农商银行'],
+  '福建':['福建海峡银行','厦门银行','厦门国际银行','福建省农村信用社'],
+  '江西':['江西银行','九江银行','赣州银行','江西省农村信用社'],
+  '湖北':['湖北银行','汉口银行','武汉农商银行','湖北省农村信用社'],
+  '湖南':['长沙银行','华融湘江银行','湖南省农村信用社'],
+  '广东':['广州银行','东莞银行','珠海华润银行','广东省农村信用社'],
+  '广西':['广西北部湾银行','桂林银行','柳州银行','广西农信社'],
+  '海南':['海南银行','海南省农村信用社'],
+  '四川':['四川银行','成都银行','长城华西银行','四川省农村信用社'],
+  '贵州':['贵州银行','贵阳银行','贵州省农村信用社'],
+  '云南':['富滇银行','云南省农村信用社'],
+  '西藏':['西藏银行','西藏自治区农村信用社'],
+  '陕西':['长安银行','西安银行','陕西省农村信用社'],
+  '甘肃':['甘肃银行','兰州银行','甘肃省农村信用社'],
+  '青海':['青海银行','青海省农村信用社'],
+  '宁夏':['宁夏银行','黄河农村商业银行','宁夏农信社'],
+  '新疆':['新疆银行','乌鲁木齐银行','新疆农信社'],
+  '内蒙古':['内蒙古银行','蒙商银行','内蒙古农信社'],
+  '辽宁':['盛京银行','大连银行','锦州银行','辽宁省农村信用社'],
+  '吉林':['吉林银行','吉林省农村信用社'],
+  '黑龙江':['哈尔滨银行','龙江银行','黑龙江省农村信用社']
+};
+function isBankMajor(majorName){
+  var kws = ['经济学','经济统计','国际经济','贸易','金融','保险','投资','财政','税务','信用管理','金融工程','金融数学','经济与金融',
+    '工商管理','会计','财务','市场','人力资源','审计','资产评估','物流','旅游管理','酒店管理','电子商务',
+    '计算机','软件','人工智能','数据科学','网络工程','信息安全','物联网','数字媒体','信息管理',
+    '法学','知识产权','监狱学','社会学',
+    '数学','信息与计算科学','统计学','应用统计'];
+  for(var i=0;i<kws.length;i++){ if(majorName.indexOf(kws[i])>=0) return true; }
+  return false;
+}
+
+function openJobModal(){
+  var prov=mmState.prov;
+  if(!prov){ toast('缺少院校省份信息'); return; }
+  var pn=normProv(prov);
+  var majorName=mmState.base||'';
+  var soeTop=(((DATA.soe||{})[pn])||[]).filter(hireMatch).slice(0,5);
+  var xcyTop=(((DATA.xcy||{})[pn])||[]).filter(hireMatch).slice(0,5);
+  var extraTop=(((DATA.extra||{})[pn])||[]).filter(hireMatch).slice(0,5);
+  $('jmTitle').textContent = prov+' · 优质就业';
+  var html='<div class="m-cat">院校所在省份：'+esc(prov)+'　·　已筛选招聘「'+esc(majorName)+'」的用人单位</div>';
+  if(soeTop.length>0){
+    html+='<div class="m-block"><div class="m-label">优质央国企（'+soeTop.length+'）</div>';
+    html+='<div class="major-list">'+soeTop.map(soeRow).join('')+'</div></div>';
+  }
+  if(xcyTop.length>0){
+    html+='<div class="m-block"><div class="m-label">新兴产业重点企业（'+xcyTop.length+'）</div>';
+    html+='<div class="major-list">'+xcyTop.map(xcyRow).join('')+'</div></div>';
+  }
+  if(extraTop.length>0){
+    html+='<div class="m-block"><div class="m-label">联网补充 · 校招单位参考（'+extraTop.length+'）</div>';
+    html+='<div class="major-list">'+extraTop.map(extraRow).join('')+'</div></div>';
+  }
+  if(isBankMajor(majorName)){
+    var bankList = [
+      {name:'国有银行（中、农、工、建、交、邮储）',type:'国有大型商业银行'},
+      {name:'政策性银行（国开、进出口、农发行）',type:'政策性银行'},
+      {name:'招商银行',type:'股份制商业银行'}
+    ];
+    var localBanks = BANK_LOCAL[pn]||[];
+    if(localBanks.length>0) bankList.push({name:localBanks[0],type:'地方性银行'});
+    if(localBanks.length>1) bankList.push({name:localBanks[1],type:'地方性银行'});
+    html+='<div class="m-block"><div class="m-label">银行系统（'+bankList.length+'）</div>';
+    html+='<div class="major-list">'+bankList.map(function(b){
+      return '<div class="major-row"><div class="m-name">'+esc(b.name)+'</div><div class="m-sub"><span>'+esc(b.type)+'</span><span>'+esc(pn)+'分行/网点</span></div></div>';
+    }).join('')+'</div></div>';
+  }
+  if(soeTop.length===0 && xcyTop.length===0 && extraTop.length===0){
+    html+='<div class="m-empty">该省暂无公开招聘「'+esc(majorName)+'」的优质央国企、新兴产业企业或联网补充校招单位，可返回查看其他省份院校，或换个专业再试。</div>';
+  }
+  html+='<div class="fuzzy-note">本地数据按企业招聘需求与所选专业匹配（含按专业类招聘）；联网补充为该省公开校招单位（含体制内/教育系统通道），信息抓取于 2026-08，仅供家长参考，具体以各单位最新公告为准。</div>';
+  html+='<div class="m-foot"><button type="button" class="btn-primary" data-close="jobModal">关 闭</button></div>';
+  $('jmBody').innerHTML=html;
+  openModal('jobModal');
+}
+
+/* ===== 弹窗：同类专业 ===== */
+function openSameClass(){
+  var cls=mmState.cls;
+  if(!cls || !classInfo[cls]){ toast('未找到该专业的专业类信息'); return; }
+  $('smTitle').textContent = cls+' · 同类专业';
+  $('smBody').innerHTML =
+    '<div class="m-cat">'+esc(classInfo[cls].meng)+'门类 · '+esc(cls)+'类 · 共 '+classInfo[cls].list.length+' 个专业（点击可查看介绍）</div>'+
+    '<div class="major-list">'+classInfo[cls].list.map(function(m){
+      return '<button type="button" class="major-row" data-major="'+esc(m.name)+'" data-prov="'+esc(mmState.prov||'')+'">'+
+        '<div class="m-name">'+esc(m.name)+'</div>'+
+        '<div class="m-sub"><span>'+esc(m.code||'—')+'</span><span>'+esc(m.degree||'')+'</span><span>'+esc(m.years||'')+'</span></div>'+
+      '</button>';
+    }).join('')+'</div>';
+  openModal('sameModal');
+}
+
+/* ===== 事件绑定 ===== */
+initFilter();
+$('firstSeg').addEventListener('click', function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  state.first=b.getAttribute('data-v');
+  Array.prototype.forEach.call(this.querySelectorAll('button'),function(x){x.classList.remove('on');});
+  b.classList.add('on');
+});
+var chipBtns=Array.prototype.slice.call($('rechooseChips').querySelectorAll('.chip'));
+$('rechooseChips').addEventListener('click', function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  var v=b.getAttribute('data-v');
+  var idx=state.rechoose.indexOf(v);
+  if(idx>=0){ state.rechoose.splice(idx,1); b.classList.remove('on'); }
+  else if(state.rechoose.length>=2){ toast('再选科目最多选 2 门'); return; }
+  else { state.rechoose.push(v); b.classList.add('on'); }
+  $('rechooseHint').textContent = state.rechoose.length===0 ? '请选择 2 门再选科目'
+    : (state.rechoose.length===1 ? '已选 1 门，再选 1 门' : '已选 2 门：'+state.rechoose.join('、'));
+});
+$('btnExisting').addEventListener('click', function(){ runQuery('existing'); });
+$('btnMore').addEventListener('click', function(){ runQuery('more'); });
+$('btnDream').addEventListener('click', function(){
+  $('dreamInput').value = '';
+  $('dreamResultList').innerHTML = '<div class="dream-empty">输入院校名称开始搜索</div>';
+  _dreamSubject = state.first || '物理';
+  var pb = $('dreamSubPhys'), hb = $('dreamSubHist');
+  if(pb && hb){
+    if(_dreamSubject === '物理'){ pb.classList.add('on'); hb.classList.remove('on'); }
+    else { hb.classList.add('on'); pb.classList.remove('on'); }
+  }
+  openModal('dreamModal');
+  setTimeout(function(){ $('dreamInput').focus(); }, 200);
+});
+$('dreamInput').addEventListener('input', function(){
+  var kw = this.value.trim();
+  if(kw) renderDreamResults(kw);
+  else $('dreamResultList').innerHTML = '<div class="dream-empty">输入院校名称开始搜索</div>';
+});
+$('dreamSubPhys').addEventListener('click', function(){
+  _dreamSubject = '物理';
+  this.classList.add('on');
+  $('dreamSubHist').classList.remove('on');
+});
+$('dreamSubHist').addEventListener('click', function(){
+  _dreamSubject = '历史';
+  this.classList.add('on');
+  $('dreamSubPhys').classList.remove('on');
+});
+$('dreamResultList').addEventListener('click', function(e){
+  var item = e.target.closest('.dream-result-item');
+  if(!item) return;
+  showDreamSchool(item.getAttribute('data-school'));
+});
+$('mmSameBtn').addEventListener('click', openSameClass);
+$('mmJobBtn').addEventListener('click', openJobModal);
+document.addEventListener('click', function(e){
+  var c=e.target.closest('[data-close]');
+  if(c){ closeModal(c.getAttribute('data-close')); return; }
+  var cbtn=e.target.closest('.cluster-btn');
+  if(cbtn){ showClusterModal(cbtn.getAttribute('data-city')); return; }
+  var ogbtn=e.target.closest('.other-groups-btn');
+  if(ogbtn){
+    showOtherGroups(ogbtn.getAttribute('data-school'), ogbtn.getAttribute('data-group'), parseInt(ogbtn.getAttribute('data-score'))||0, ogbtn.getAttribute('data-sub')||'物理');
+    return;
+  }
+  var mc=e.target.closest('[data-major]');
+  if(mc){
+    var nm=mc.getAttribute('data-major');
+    if($('sameModal') && !$('sameModal').hidden){ closeModal('sameModal'); }
+    openMajor(nm, mc.getAttribute('data-prov') || '');
+  }
+});
+
+function showClusterModal(city){
+  var list = (DATA.cluster||{})[city] || [];
+  $('cmTitle').textContent = city + ' · 产业集群（共' + list.length + '个）';
+  if(list.length === 0){
+    $('cmBody').innerHTML = '<div class="m-text" style="color:#888;text-align:center;padding:20px 0;">该城市暂无产业集群数据</div>';
+  } else {
+    var groups = {};
+    for(var i=0;i<list.length;i++){
+      var rec = list[i];
+      var ind = rec[1] || '未分类';
+      if(!groups[ind]) groups[ind] = [];
+      groups[ind].push(rec);
+    }
+    var html = '';
+    var indKeys = Object.keys(groups).sort(function(a,b){ return groups[b].length - groups[a].length; });
+    for(var k=0;k<indKeys.length;k++){
+      var ind = indKeys[k];
+      var items = groups[ind];
+      html += '<div class="cluster-group">';
+      html += '<div class="cluster-group-title">'+esc(ind)+'<span class="cluster-group-count">'+items.length+'个</span></div>';
+      for(var j=0;j<items.length;j++){
+        var rec = items[j];
+        html += '<div class="cluster-item">';
+        html += '<div class="cluster-item-name">'+esc(rec[0])+'</div>';
+        var meta = '';
+        if(rec[2]) meta += '<span class="cluster-item-cat">'+esc(rec[2])+'</span>';
+        if(rec[3]) meta += '<span>主导：'+esc(rec[3])+'</span>';
+        if(meta) html += '<div class="cluster-item-meta">'+meta+'</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+    $('cmBody').innerHTML = html;
+  }
+  openModal('clusterModal');
+}
+
+/* ===== 梦中情校：院校搜索 ===== */
+var _allSchools = null;
+var _dreamSubject = '物理';
+function buildSchoolIndex(){
+  if(_allSchools) return _allSchools;
+  var map = {};
+  var arr = (DATA.wl || []).concat(DATA.ls || []);
+  for(var i=0;i<arr.length;i++){
+    var g = arr[i];
+    var name = g[0];
+    if(!name) continue;
+    if(!map[name]){
+      map[name] = {name:name, prov:g[1], city:g[2], count:0, scores:[]};
+    }
+    map[name].count++;
+    if(g[8] > 0) map[name].scores.push(g[8]);
+  }
+  _allSchools = Object.keys(map).map(function(k){ return map[k]; });
+  return _allSchools;
+}
+function searchSchools(kw){
+  var list = buildSchoolIndex();
+  kw = (kw || '').trim();
+  if(!kw) return [];
+  var kwLow = kw.toLowerCase();
+  var results = [];
+  for(var i=0;i<list.length;i++){
+    var s = list[i];
+    var baseName = s.name.replace(/[（(][^）)]*[）)]/g,'').trim();
+    if(s.name.toLowerCase().indexOf(kwLow) >= 0 || baseName.toLowerCase().indexOf(kwLow) >= 0) results.push(s);
+  }
+  // 排序：精准匹配优先，然后按专业组数降序
+  results.sort(function(a,b){
+    var aExact = a.name.replace(/[（(][^）)]*[）)]/g,'').trim() === kw;
+    var bExact = b.name.replace(/[（(][^）)]*[）)]/g,'').trim() === kw;
+    if(aExact && !bExact) return -1;
+    if(!aExact && bExact) return 1;
+    return b.count - a.count;
+  });
+  return results;
+}
+function renderDreamResults(kw){
+  var list = searchSchools(kw);
+  var box = $('dreamResultList');
+  if(list.length === 0){
+    box.innerHTML = '<div class="dream-empty">未找到匹配的院校<br>试试其他关键词或切换搜索方式</div>';
+    return;
+  }
+  var html = '';
+  for(var i=0;i<list.length;i++){
+    var s = list[i];
+    var maxScore = s.scores.length > 0 ? Math.max.apply(null, s.scores) : 0;
+    var minScore = s.scores.length > 0 ? Math.min.apply(null, s.scores) : 0;
+    html += '<div class="dream-result-item" data-school="'+esc(s.name).replace(/"/g,'&quot;')+'">';
+    html += '<div class="dream-result-name">'+esc(s.name)+'</div>';
+    html += '<div class="dream-result-meta">';
+    html += '<span>'+esc(s.prov)+' · '+esc(s.city)+'</span>';
+    html += '<span>'+s.count+'个专业组</span>';
+    if(maxScore > 0) html += '<span>投档线 '+minScore+'~'+maxScore+'分</span>';
+    html += '</div></div>';
+  }
+  box.innerHTML = html;
+}
+function showDreamSchool(schoolName){
+  closeModal('dreamModal');
+  // 只筛选当前选科（物理/历史）的专业组
+  var arr = _dreamSubject === '物理' ? (DATA.wl || []) : (DATA.ls || []);
+  var filtered = arr.filter(function(g){ return g[0] === schoolName; });
+  // 按投档线分数从高到低排序
+  filtered.sort(function(a,b){ return (b[8]||0) - (a[8]||0); });
+  // 隐藏考情分析和筛选栏
+  $('analysisBlock').hidden = true;
+  $('filterBar').hidden = true;
+  $('locBlock').hidden = true;
+  // 设置标题
+  $('resTitle').innerHTML = '✨ 梦中情校 · <span class="target-num">'+esc(schoolName)+'</span>';
+  $('resMeta').innerHTML = '共 <b>'+filtered.length+'</b> 个专业组（按投档线从高到低排序）';
+  // 渲染结果
+  _resState = {arr:filtered, target:0, kind:'dream', page:0, perPage:50};
+  $('resultList').innerHTML = '';
+  if(filtered.length === 0){
+    $('resultList').innerHTML = '<div class="empty">该院校暂无专业组数据</div>';
+  } else {
+    renderChunk();
+  }
+  $('results').hidden = false;
+  // 滚动到结果区域
+  setTimeout(function(){ $('results').scrollIntoView({behavior:'smooth', block:'start'}); }, 100);
+}
+
+/* ===== 其他专业组弹窗 ===== */
+function showOtherGroups(schoolName, curGroup, curScore, subject){
+  var subj = subject || '物理';
+  var arr = subj === '物理' ? (DATA.wl || []) : (DATA.ls || []);
+  var all = arr.filter(function(g){ return g[0] === schoolName; });
+  // 排除当前专业组（院校名+专业组名+投档线相同）
+  var others = all.filter(function(g){
+    return !(g[3] === curGroup && g[8] === curScore);
+  });
+  // 按投档线从高到低排序
+  others.sort(function(a,b){ return (b[8]||0) - (a[8]||0); });
+  $('ogTitle').textContent = schoolName + ' · 其他专业组（共' + others.length + '个）';
+  var box = $('ogList');
+  if(others.length === 0){
+    box.innerHTML = '<div class="dream-empty">该院校暂无其他专业组</div>';
+  } else {
+    var html = '';
+    for(var i=0;i<others.length;i++){
+      var g = others[i];
+      var allMajors = g[5]||[];
+      var majorsHtml = '';
+      if(allMajors.length > 0){
+        if(allMajors.length <= 4){
+          majorsHtml = '<div class="og-majors">'+allMajors.map(function(m){return esc(m);}).join('、')+'</div>';
+        } else {
+          var visible = allMajors.slice(0,4).map(function(m){return esc(m);}).join('、');
+          var rest = allMajors.slice(4).map(function(m){return esc(m);}).join('、');
+          var restCount = allMajors.length - 4;
+          majorsHtml = '<div class="og-majors">'+visible+
+            '<span class="og-rest" style="display:none;">、'+rest+'</span>'+
+            ' <span class="og-toggle" style="color:#3A6FD4;cursor:pointer;font-size:11px;font-weight:600;" onclick="var r=this.previousElementSibling;if(r.style.display==\'none\'){r.style.display=\'inline\';this.textContent=\'收起\';}else{r.style.display=\'none\';this.textContent=\'展开'+restCount+'个\';}">展开'+restCount+'个</span></div>';
+        }
+      }
+      html += '<div class="og-item">';
+      html += '<div class="og-item-top">';
+      html += '<div class="og-group-name">'+esc(g[3])+'</div>';
+      html += '<div class="og-score">'+(g[8]||'—')+'<span> 分</span></div>';
+      html += '</div>';
+      html += '<div class="og-meta">';
+      if(g[9]) html += '<span>位次 '+g[9].toLocaleString()+'</span>';
+      if(g[4]) html += '<span>选科 '+esc(g[4])+'</span>';
+      if(g[7]) html += '<span>计划 '+g[7]+'人</span>';
+      html += '</div>';
+      html += majorsHtml;
+      html += '</div>';
+    }
+    box.innerHTML = html;
+  }
+  openModal('otherModal');
+}
+
+</script>
+</body>
+</html>
